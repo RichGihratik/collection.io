@@ -11,7 +11,7 @@ import { isValidPayload } from './typeguards';
 export class AccessJwtService {
   constructor(private jwt: JwtService) {}
 
-  async createAccessToken(user: User) {
+  async createToken(user: User) {
     const payload: AccessPayload = this.userToPayload(user);
     return await this.jwt.signAsync(payload);
   }
