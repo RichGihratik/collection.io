@@ -11,6 +11,8 @@ export function isValidPayload(item: unknown): item is AccessPayload {
     isJwtPayload(item) &&
     JwtFields.Name in item &&
     typeof item[JwtFields.Name] === 'string' &&
+    JwtFields.Email in item &&
+    typeof item[JwtFields.Email] === 'string' &&
     JwtFields.Role in item &&
     isRole(item[JwtFields.Role])
   );
