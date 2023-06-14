@@ -1,0 +1,1 @@
+export const ACCESS_SECRET_KEY = 'ACCESS_SECRET';
