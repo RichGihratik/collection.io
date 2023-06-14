@@ -2,13 +2,11 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { DatabaseModule } from '@/database';
 import { ACCESS_SECRET_KEY } from './const';
 import { AccessJwtService } from './access-jwt.service';
 
 @Module({
   imports: [
-    DatabaseModule,
     JwtModule.registerAsync({
       useFactory: async (cfg: ConfigService) => ({
         secret: cfg.get<string>(ACCESS_SECRET_KEY),
