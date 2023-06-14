@@ -3,7 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { FastifyRequest } from 'fastify';
 
-import { RawJwt, AccessJwt, RawFields } from './access-jwt.interface';
+import { AccessPayload, ParsedAccessPayload } from './access-jwt.interface';
+import { JwtFields } from '../jwt-types';
 import { isValidPayload } from './typeguards';
 
 @Injectable()
@@ -11,11 +12,11 @@ export class AccessJwtService {
   constructor(private jwt: JwtService) {}
 
   async createAccessToken(user: User) {
-    const payload: RawJwt = this.userToPayload(user);
+    const payload: AccessPayload = this.userToPayload(user);
     return await this.jwt.signAsync(payload);
   }
 
-  verifyRequest(req: FastifyRequest): AccessJwt | undefined {
+  verifyRequest(req: FastifyRequest): ParsedAccessPayload | undefined {
     const token = req.headers.authorization.split(' ')[1];
     try {
       const payload = this.jwt.verify(token);
@@ -26,21 +27,21 @@ export class AccessJwtService {
     }
   }
 
-  private remapPayload(item: RawJwt): AccessJwt {
+  private remapPayload(item: AccessPayload): ParsedAccessPayload {
     return {
-      id: item[RawFields.Id],
-      email: item[RawFields.Email],
-      name: item[RawFields.Name],
-      role: item[RawFields.Role],
+      id: item[JwtFields.Id],
+      email: item[JwtFields.Email],
+      name: item[JwtFields.Name],
+      role: item[JwtFields.Role],
     };
   }
 
-  private userToPayload(user: User): RawJwt {
+  private userToPayload(user: User): AccessPayload {
     return {
-      [RawFields.Id]: user.id,
-      [RawFields.Email]: user.email,
-      [RawFields.Name]: user.name,
-      [RawFields.Role]: user.role,
+      [JwtFields.Id]: user.id,
+      [JwtFields.Email]: user.email,
+      [JwtFields.Name]: user.name,
+      [JwtFields.Role]: user.role,
     };
   }
 }

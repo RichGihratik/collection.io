@@ -1,20 +1,12 @@
 import { UserRole } from '@prisma/client';
+import { JwtPayload, JwtFields } from '../jwt-types';
 
-export enum RawFields {
-  Id = 'sub',
-  Name = 'nickname',
-  Email = 'email',
-  Role = 'roles',
+export interface AccessPayload extends JwtPayload {
+  [JwtFields.Name]: string;
+  [JwtFields.Role]: UserRole;
 }
 
-export type RawJwt = {
-  [RawFields.Id]: number;
-  [RawFields.Name]: string;
-  [RawFields.Email]: string;
-  [RawFields.Role]: UserRole;
-};
-
-export type AccessJwt = {
+export type ParsedAccessPayload = {
   id: number;
   name: string;
   email: string;
