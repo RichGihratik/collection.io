@@ -9,7 +9,7 @@ const source = join(__dirname, prismaFolder);
 
 const targets = [
   'auth'
-].map((target) => join(__dirname, '..', target));
+].map((target) => join(__dirname, '..', '..', target));
 
 (async () => {
   for (const target of targets) {
@@ -28,7 +28,7 @@ const targets = [
         console.log(`Stderror: ${stderr}`);
         return;
       }
-      console.log(`Stdout: ${stdout}`);
+      console.log(stdout);
     });
   }
 })();
