@@ -9,7 +9,7 @@ const source = join(__dirname, prismaFolder);
 
 const targets = [
   'auth',
-  'packages/auth-guard'
+  'packages/access-jwt'
 ];
 
 function log(str) {
