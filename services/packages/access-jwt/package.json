@@ -11,6 +11,7 @@
     "dist/**/*"
   ],
   "scripts": {
+    "postinstall": "npm run build",
     "build": "nest build"
   },
   "dependencies": {
