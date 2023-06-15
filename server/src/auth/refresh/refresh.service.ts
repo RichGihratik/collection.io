@@ -17,7 +17,7 @@ import { JwtFields } from '../jwt-types';
 const COOKIE_OPTIONS: CookieSerializeOptions = {
   sameSite: 'none',
   httpOnly: true,
-  secure: true,
+  secure: false,
 };
 
 @Injectable()
@@ -42,10 +42,16 @@ export class RefreshService {
 
   private async verifyRequest(req: FastifyRequest, res: FastifyReply) {
     const token = this.extractToken(req);
-    if (!token) throw new UnauthorizedException('User unauthorized');
+    if (!token) {
+      this.logger.log('Token was not found.');
+      throw new UnauthorizedException('User unauthorized');
+    }
 
     const payload = this.jwt.verifyToken(token);
     if (!payload) {
+      this.logger.log(
+        'Token has invalid type and/or signature. Clearing cookie...',
+      );
       this.clearToken(res);
       throw new UnauthorizedException('User unauthorized');
     }
@@ -55,12 +61,17 @@ export class RefreshService {
     });
 
     if (!user) {
+      this.logger.log(
+        `User with id ${
+          payload[JwtFields.Id]
+        } was not found. Clearing cookie and history...`,
+      );
       this.clearToken(res);
       this.history.invalidateAll(payload[JwtFields.Id]);
       throw new UnauthorizedException('User does not exist');
     }
 
-    if (!this.history.checkToken(user.id, token)) {
+    if (!(await this.history.checkToken(user.id, token))) {
       this.clearToken(res);
       await this.history.invalidateAll(user.id);
       this.logger.warn(
@@ -84,7 +95,7 @@ export class RefreshService {
 
   async useToken(req: FastifyRequest, res: FastifyReply) {
     const { user, token } = await this.verifyRequest(req, res);
-    this.history.invalidateToken(user.id, token);
+    await this.history.invalidateToken(user.id, token);
     await this.setRefreshToken(user, res);
     this.logger.log(`User ${user.id} updated refresh token`);
     return user;
@@ -92,7 +103,7 @@ export class RefreshService {
 
   async removeToken(req: FastifyRequest, res: FastifyReply) {
     const { user, token } = await this.verifyRequest(req, res);
-    this.history.invalidateToken(user.id, token);
+    await this.history.invalidateToken(user.id, token);
     this.logger.log(`User's ${user.id} token has been invalidated`);
     this.clearToken(res);
   }

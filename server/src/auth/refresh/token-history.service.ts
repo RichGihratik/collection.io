@@ -1,15 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { Cache } from 'cache-manager';
-
-enum TokenStatus {
-  Valid = 'valid',
-}
-
-interface TokenHistory {
-  [key: string]: TokenStatus;
-}
 
 @Injectable()
 export class TokenHistoryService {
@@ -19,11 +11,11 @@ export class TokenHistoryService {
     return `${id}:user-token-history`;
   }
 
-  private async getHistory(id: number): Promise<TokenHistory | undefined> {
-    return await this.cache.get<TokenHistory>(this.getKeyFromId(id));
+  private async getHistory(id: number): Promise<string[] | undefined> {
+    return await this.cache.get<string[]>(this.getKeyFromId(id));
   }
 
-  private async setHistory(id: number, history?: TokenHistory) {
+  private async setHistory(id: number, history?: string[]) {
     if (history) await this.cache.set(this.getKeyFromId(id), history);
     else await this.cache.del(this.getKeyFromId(id));
   }
@@ -36,7 +28,9 @@ export class TokenHistoryService {
   async invalidateToken(id: number, token: string) {
     const history = await this.getHistory(id);
     if (history) {
-      delete history[token];
+      for (const [index, item] of history.entries()) {
+        if (await compare(token, item)) history.splice(index, 1);
+      }
       await this.setHistory(id, history);
     }
   }
@@ -47,15 +41,20 @@ export class TokenHistoryService {
 
   async checkToken(id: number, token: string) {
     const history = await this.getHistory(id);
-    const hash = await this.hashToken(token);
-    if (history && history[hash] === TokenStatus.Valid) return true;
-    else return false;
+
+    if (!history) return false;
+
+    for (const item of history) {
+      if (await compare(token, item)) return true;
+    }
+
+    return false;
   }
 
   async registerToken(id: number, token: string) {
-    const history = (await this.getHistory(id)) ?? {};
+    const history = (await this.getHistory(id)) ?? [];
     const hash = await this.hashToken(token);
-    history[hash] = TokenStatus.Valid;
+    history.push(hash);
     await this.setHistory(id, history);
   }
 }
