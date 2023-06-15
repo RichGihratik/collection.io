@@ -20,8 +20,13 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  await app.register(fastifyCookie);
-  await app.register(helmet);
+
+  // Theres an issue with fastify plugin types, for some reason, the don't work
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  await app.register(helmet as any);
+  await app.register(fastifyCookie as any);
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
   await app.listen(3000);
 }
 bootstrap();
