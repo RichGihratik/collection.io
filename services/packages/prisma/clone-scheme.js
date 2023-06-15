@@ -8,18 +8,31 @@ const prismaFolder = 'prisma';
 const source = join(__dirname, prismaFolder);
 
 const targets = [
-  'auth'
-].map((target) => join(__dirname, '..', '..', target));
+  'auth',
+  'packages/auth-guard'
+];
+
+function log(str) {
+  console.log('\x1b[92m\x1b[1m%s\x1b[0m', str);
+}
+
+function drawLine() {
+  log('======================================');
+}
 
 (async () => {
   for (const target of targets) {
-    const prismaDir = join(target, prismaFolder); 
+    const targetDir = join(__dirname, '..', '..', target);
 
+    const prismaDir = join(targetDir, prismaFolder);
     await rm(prismaDir, { recursive: true, force: true });
     await mkdir(prismaDir);
 
-    copyFile(join(source, schemeName), join(prismaDir, schemeName));
-    exec(`npx prisma generate`, { cwd: target }, (error, stdout, stderr) => {
+    await copyFile(join(source, schemeName), join(prismaDir, schemeName));
+    log(`Schema for "${target}" created. Starting prisma generate...`);
+    exec(`npx prisma generate`, { cwd: targetDir }, (error, stdout, stderr) => {
+      drawLine();
+      log(`Prisma generate results for "${target}":\n`);
       if (error) {
         console.log(`Error occured: ${error.message}`);
         return;
