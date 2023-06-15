@@ -1,0 +1,33 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users
+// ======================================
+
+enum UserRole {
+  CUSTOMER @map("customer")
+  ADMIN @map("admin")
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED 
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  role      UserRole   @default(CUSTOMER)
+  createdAt DateTime   @default(now())
+  lastLogin DateTime   @default(now())
+  status    UserStatus @default(ACTIVE)
+  name      String
+  email     String     @unique
+  hash      String
+}

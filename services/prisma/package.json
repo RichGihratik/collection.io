@@ -1,0 +1,12 @@
+{
+	"name": "@collection.io/prisma",
+	"author": "RichGihratik (Cyrus)",
+	"description": "Package for modifying prisma schemes",
+	"dependencies": {
+		"@prisma/client": "4.15.0",
+		"prisma": "^4.15.0"
+	},
+	"scripts": {
+		"clone-scheme": "node clone-scheme.js"
+	}
+}
