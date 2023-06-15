@@ -7,8 +7,8 @@ import { AccessJwtService } from './access-jwt.service';
 
 @Module({
   imports: [
-    ConfigModule,
     JwtModule.registerAsync({
+      imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
         secret: cfg.get<string>(ACCESS_SECRET_KEY),
         signOptions: { expiresIn: EXPIRE_IN },
