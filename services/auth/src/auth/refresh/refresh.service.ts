@@ -74,7 +74,7 @@ export class RefreshService {
       this.clearToken(res);
       await this.history.invalidateAll(user.id);
       this.logger.warn(
-        `User ${user.id} attempted to refresh with used token. All tokens has been invalidated`,
+        `User ${user.email} attempted to refresh with used token. All tokens has been invalidated`,
       );
       throw new ForbiddenException('Attempt to refresh with used token');
     }
@@ -96,14 +96,14 @@ export class RefreshService {
     const { user, token } = await this.verifyRequest(req, res);
     await this.history.invalidateToken(user.id, token);
     await this.setRefreshToken(user, res);
-    this.logger.log(`User ${user.id} updated refresh token`);
+    this.logger.log(`User ${user.email} updated refresh token`);
     return user;
   }
 
   async removeToken(req: FastifyRequest, res: FastifyReply) {
     const { user, token } = await this.verifyRequest(req, res);
     await this.history.invalidateToken(user.id, token);
-    this.logger.log(`User's ${user.id} token has been invalidated`);
+    this.logger.log(`User's ${user.email} token has been invalidated`);
     this.clearToken(res);
   }
 }
