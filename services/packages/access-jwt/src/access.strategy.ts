@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { FastifyRequest } from 'fastify';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@collection.io/prisma';
 
 import { VerifyTokenService } from './verify-token.service';
 import { ROLES_METADATA_KEY } from './role.decorator';

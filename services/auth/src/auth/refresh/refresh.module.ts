@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigService, ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import ms from 'ms';
+import { DatabaseModule } from '@collection.io/prisma';
 
 import { REFRESH_SECRET_KEY, REDIS_URL_KEY, EXPIRE_IN } from './const';
 import { RefreshJwtService } from './refresh-jwt.service';
@@ -12,8 +13,8 @@ import { TokenHistoryService } from './token-history.service';
 
 @Module({
   imports: [
+    DatabaseModule,
     CacheModule.registerAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
         store: await redisStore({ url: config.get<string>(REDIS_URL_KEY) }),
@@ -21,12 +22,11 @@ import { TokenHistoryService } from './token-history.service';
       }),
     }),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (cfg: ConfigService) => ({
         secret: cfg.get<string>(REFRESH_SECRET_KEY),
         signOptions: { expiresIn: EXPIRE_IN },
       }),
-      inject: [ConfigService],
     }),
   ],
   providers: [RefreshJwtService, TokenHistoryService, RefreshService],

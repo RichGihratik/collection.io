@@ -5,10 +5,9 @@ import {
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { hash, compare } from 'bcrypt';
-import { User } from '@prisma/client';
-
 import { CreateTokenService } from '@collection.io/access-jwt';
-import { DatabaseService } from '@/database';
+import { DatabaseService, User } from '@collection.io/prisma';
+
 import { SigninDto, SignupDto } from './dto';
 import { RefreshService } from './refresh';
 

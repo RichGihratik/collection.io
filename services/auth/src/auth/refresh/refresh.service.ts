@@ -6,13 +6,12 @@ import {
 } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { CookieSerializeOptions } from '@fastify/cookie';
-import { User } from '@prisma/client';
 import { JwtFields } from '@collection.io/access-jwt';
+import { User, DatabaseService } from '@collection.io/prisma';
 
 import { TOKEN_COOKIE_KEY } from './const';
 import { RefreshJwtService } from './refresh-jwt.service';
 import { TokenHistoryService } from './token-history.service';
-import { DatabaseService } from '@/database';
 
 const COOKIE_OPTIONS: CookieSerializeOptions = {
   sameSite: 'none',

@@ -1,19 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { DatabaseService } from '@collection.io/prisma';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class UserInfoService implements OnModuleInit, OnModuleDestroy {
-  private client = new PrismaClient();
-
-  async onModuleInit() {
-    await this.client.$connect();
-  }
+export class UserInfoService {
+  constructor(private db: DatabaseService) {}
 
   async getUser(id: number) {
-    return await this.client.user.findUnique({ where: { id } });
-  }
-
-  async onModuleDestroy() {
-    await this.client.$disconnect();
+    return await this.db.user.findUnique({ where: { id } });
   }
 }

@@ -6,6 +6,7 @@ import { VerifyTokenService } from './verify-token.service';
 import { CreateTokenService } from './create-token.service';
 import { UserInfoService } from './user-info.service';
 import { AccessStrategy } from './access.strategy';
+import { DatabaseModule } from '@collection.io/prisma';
 
 @Module({})
 export class AccessJwtModule {
@@ -13,6 +14,7 @@ export class AccessJwtModule {
     return {
       module: AccessJwtModule,
       imports: [
+        DatabaseModule,
         JwtModule.register({
           secret: process.env[configSecretKey],
           signOptions: { expiresIn: '10m' },
