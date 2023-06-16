@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { hash, compare } from 'bcrypt';
@@ -13,6 +14,8 @@ import { RefreshService } from './refresh';
 
 @Injectable()
 export class AuthService {
+  private logger = new Logger('Auth');
+
   constructor(
     private db: DatabaseService,
     private accessJwt: CreateTokenService,
@@ -26,18 +29,25 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) throw new BadRequestException('Incorrect email and/or password');
+    if (!user) {
+      this.logger.log(`Email "${email}" not found when signing in`);
+      throw new BadRequestException('Incorrect email and/or password');
+    }
 
     this.checkUserStatus(user);
 
     const compareResult = await this.comparePasswords(password, user.hash);
 
-    if (!compareResult)
+    if (!compareResult) {
+      this.logger.log(`Invalid password for "${user.email}"`);
       throw new BadRequestException('Incorrect email and/or password');
+    }
 
     await this.updateLogin(user.id);
     await this.refreshJwt.setRefreshToken(user, res);
     const access = await this.accessJwt.createToken(user);
+
+    this.logger.log(`User "${user.email}" logged in`);
 
     return {
       access,
@@ -51,8 +61,12 @@ export class AuthService {
       where: { email },
     });
 
-    if (user)
+    if (user) {
+      this.logger.log(
+        `Attempt to sign up with existing email: "${user.email}"`,
+      );
       throw new BadRequestException('User with this email already exists');
+    }
 
     const hash = await this.hashPassword(password);
 
@@ -60,6 +74,8 @@ export class AuthService {
 
     await this.refreshJwt.setRefreshToken(user, res);
     const access = await this.accessJwt.createToken(user);
+
+    this.logger.log(`User ${user.email} registered`);
 
     return {
       access,
@@ -83,8 +99,10 @@ export class AuthService {
   }
 
   private checkUserStatus(user: User | undefined) {
-    if (user.status === 'BLOCKED')
+    if (user.status === 'BLOCKED') {
+      this.logger.log(`Blocked user "${user.email}" attempted to log in`);
       throw new ForbiddenException('Account is blocked');
+    }
   }
 
   private async hashPassword(password: string) {
