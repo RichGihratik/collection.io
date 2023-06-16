@@ -1,9 +1,9 @@
 {
-	"name": "@collection.io/prisma",
-	"version": "1.0.0",
-	"author": "RichGihratik (Cyrus)",
-	"description": "Prisma ORM package for collection.io services",
-	"private": true,
+  "name": "@collection.io/prisma",
+  "version": "1.0.0",
+  "author": "RichGihratik (Cyrus)",
+  "description": "Prisma ORM package for collection.io services",
+  "private": true,
   "license": "GPL-3.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,9 +15,9 @@
     "build": "nest build"
   },
   "dependencies": {
-		"@prisma/client": "4.15.0",
-		"prisma": "^4.15.0"
-	},
+    "@prisma/client": "4.15.0",
+    "prisma": "^4.15.0"
+  },
   "peerDependencies": {
     "@nestjs/common": "^9.4.3",
     "@nestjs/core": "^9.4.3",
