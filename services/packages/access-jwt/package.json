@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@collection.io/prisma": "link:../prisma",
+    "@nestjs/config": "^3.0.0",
     "@nestjs/jwt": "^10.1.0"
   },
   "peerDependencies": {
