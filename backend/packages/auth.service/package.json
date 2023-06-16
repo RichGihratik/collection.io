@@ -1,7 +1,7 @@
 {
-  "name": "@collection.io/auth-service",
+  "name": "@collection.io/auth.service",
   "version": "1.0.0",
-  "description": "",
+  "description": "Auth microservice for collection.io",
   "author": "RichGihratik (Cyrus)",
   "private": true,
   "license": "GPL-3.0",
@@ -15,8 +15,8 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
-    "@collection.io/access-jwt": "link:../packages/access-jwt",
-    "@collection.io/prisma": "link:../packages/prisma",
+    "@collection.io/access-jwt": "workspace:^",
+    "@collection.io/prisma": "workspace:^",
     "@fastify/cookie": "^8.3.0",
     "@fastify/helmet": "^10.1.1",
     "@nestjs/cache-manager": "^1.0.0",

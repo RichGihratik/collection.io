@@ -15,7 +15,7 @@
     "build": "nest build"
   },
   "dependencies": {
-    "@collection.io/prisma": "link:../prisma",
+    "@collection.io/prisma": "workspace:^",
     "@nestjs/config": "^3.0.0",
     "@nestjs/jwt": "^10.1.0"
   },
