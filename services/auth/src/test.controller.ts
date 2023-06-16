@@ -1,12 +1,14 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { Role, AuthGuard } from '@collection.io/access-jwt';
+import { Role, AuthGuard, UserInfo } from '@collection.io/access-jwt';
+import { User } from '@collection.io/prisma';
 
 @Controller('test')
 export class TestController {
   @Get('user')
   @Role('CUSTOMER')
   @UseGuards(AuthGuard)
-  user() {
+  user(@UserInfo() user: User) {
+    console.log(user);
     return 'Only for users';
   }
 

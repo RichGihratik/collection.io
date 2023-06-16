@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@collection.io/prisma';
 
-import { JwtFields, JwtPayload } from './jwt-types';
+import { JwtFields, JwtPayload } from './types';
 
 @Injectable()
 export class CreateTokenService {

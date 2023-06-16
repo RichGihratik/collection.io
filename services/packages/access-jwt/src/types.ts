@@ -1,3 +1,6 @@
+import { Request } from 'express';
+import { FastifyRequest } from 'fastify';
+
 export enum JwtFields {
   Id = 'sub',
   Name = 'nickname',
@@ -17,3 +20,5 @@ export function isJwtPayload(item: unknown): item is JwtPayload {
     typeof item[JwtFields.Id] === 'number'
   );
 }
+
+export type PlatformRequest = FastifyRequest | Request;
