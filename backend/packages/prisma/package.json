@@ -11,7 +11,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "postinstall": "npm run build",
+    "postinstall": "npx prisma generate && npm run build",
     "build": "nest build"
   },
   "dependencies": {
