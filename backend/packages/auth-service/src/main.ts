@@ -23,7 +23,6 @@ async function bootstrap() {
 
   await app.register(helmet);
   await app.register(fastifyCookie);
-
-  await app.listen(3000);
+  await app.listen(3000, 'RENDER' in process.env ? `0.0.0.0` : `localhost`);
 }
 bootstrap();
