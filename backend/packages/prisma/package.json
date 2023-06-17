@@ -1,8 +1,9 @@
 {
   "name": "@collection.io/prisma",
   "version": "1.0.0",
-  "author": "RichGihratik (Cyrus)",
   "description": "Prisma ORM package for collection.io services",
+  "packageManager": "^pnpm@8.5.1",
+  "author": "RichGihratik (Cyrus)",
   "private": true,
   "license": "GPL-3.0",
   "main": "dist/index.js",
