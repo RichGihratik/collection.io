@@ -13,21 +13,133 @@ datasource db {
 
 enum UserRole {
   CUSTOMER @map("customer")
-  ADMIN @map("admin")
+  ADMIN    @map("admin")
 }
 
 enum UserStatus {
   ACTIVE
-  BLOCKED 
+  BLOCKED
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  role      UserRole   @default(CUSTOMER)
-  createdAt DateTime   @default(now())
-  lastLogin DateTime   @default(now())
-  status    UserStatus @default(ACTIVE)
-  name      String
-  email     String     @unique
-  hash      String
+  id                Int                 @id @default(autoincrement())
+  role              UserRole            @default(CUSTOMER)
+  createdAt         DateTime            @default(now())
+  lastLogin         DateTime            @default(now())
+  status            UserStatus          @default(ACTIVE)
+  name              String
+  email             String              @unique
+  hash              String
+  collections       Collection[]
+  collectionRatings CollectionRating[]
+  itemLikes         ItemRating[]
+  comments          ItemComment[]
+  commentLikes      ItemCommentRating[]
+}
+
+// Collections
+// ======================================
+
+enum FieldType {
+  INT       @map("int")
+  TEXT      @map("text")
+  RICH_TEXT @map("richtext")
+  BOOL      @map("bool")
+  DATE      @map("date")
+}
+
+model Collection {
+  id          Int                @id @default(autoincrement())
+  name        String
+  theme       String
+  description String
+  fields      FieldConfig[]
+  items       Item[]
+  rating      CollectionRating[]
+
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+}
+
+model FieldConfig {
+  id           Int         @id @default(autoincrement())
+  collection   Collection  @relation(fields: [collectionId], references: [id])
+  collectionId Int
+  fieldType    FieldType[]
+  values       ItemValue[]
+}
+
+model Item {
+  id           Int           @id @default(autoincrement())
+  name         String
+  collection   Collection    @relation(fields: [collectionId], references: [id])
+  fields       ItemValue[]
+  collectionId Int
+  comments     ItemComment[]
+  rating       ItemRating[]
+  tags         ItemTag[]
+}
+
+model ItemTag {
+  id    Int    @id @default(autoincrement())
+  name  String
+  items Item[]
+}
+
+model ItemValue {
+  value    String
+  type     FieldConfig @relation(fields: [configId], references: [id])
+  item     Item        @relation(fields: [itemId], references: [id])
+  itemId   Int
+  configId Int
+
+  @@id([itemId, configId])
+}
+
+// Rating
+// ======================================
+
+model ItemCommentRating {
+  owner     User        @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  like      Boolean
+  comment   ItemComment @relation(fields: [commentId], references: [id])
+  commentId Int
+
+  @@id([commentId, ownerId])
+}
+
+model CollectionRating {
+  rating       Int
+  owner        User       @relation(fields: [ownerId], references: [id])
+  ownerId      Int
+  collection   Collection @relation(fields: [collectionId], references: [id])
+  collectionId Int
+
+  @@id([ownerId, collectionId])
+}
+
+model ItemRating {
+  owner   User    @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  like    Boolean
+  item    Item    @relation(fields: [itemId], references: [id])
+  itemId  Int
+
+  @@id([itemId, ownerId])
+}
+
+// Comments
+// ======================================
+
+model ItemComment {
+  id        Int                 @id @default(autoincrement())
+  item      Item                @relation(fields: [itemId], references: [id])
+  itemId    Int
+  author    User                @relation(fields: [authorId], references: [id])
+  authorId  Int
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  ratings   ItemCommentRating[]
+  content   String
 }
