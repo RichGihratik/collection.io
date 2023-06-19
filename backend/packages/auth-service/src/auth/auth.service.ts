@@ -8,7 +8,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { hash, compare } from 'bcrypt';
 import { sanitize } from 'isomorphic-dompurify';
 import { CreateTokenService } from '@collection.io/access-jwt';
-import { DatabaseService, User } from '@collection.io/prisma';
+import { DatabaseService, User, UserStatus } from '@collection.io/prisma';
 
 import { SigninDto, SignupDto, TokenDto } from './dto';
 import { RefreshService } from './refresh';
@@ -52,27 +52,34 @@ export class AuthService {
 
     return {
       access,
+      user,
     };
   }
 
   async signup(res: FastifyReply, dto: SignupDto): Promise<TokenDto> {
     const { name, email, password } = dto;
 
-    let user = await this.db.user.findUnique({
-      where: { email },
-    });
+    const user = await this.db.$transaction(async () => {
+      let user = await this.db.user.findUnique({
+        where: { email },
+      });
 
-    if (user) {
-      this.logger.log(
-        `Attempt to sign up with existing email: "${user.email}"`,
-      );
-      throw new BadRequestException('User with this email already exists');
-    }
+      if (user) {
+        this.logger.log(`Attempt to sign up with existing email: "${email}"`);
+        throw new BadRequestException('User with this email already exists');
+      }
 
-    const hash = await this.hashPassword(password);
+      const hash = await this.hashPassword(password);
 
-    user = await this.db.user.create({
-      data: { name: sanitize(name), email, hash },
+      user = await this.db.user.create({
+        data: {
+          name: sanitize(name),
+          email,
+          hash,
+        },
+      });
+
+      return user;
     });
 
     await this.refreshJwt.setRefreshToken(user, res);
@@ -82,6 +89,7 @@ export class AuthService {
 
     return {
       access,
+      user,
     };
   }
 
@@ -98,11 +106,12 @@ export class AuthService {
 
     return {
       access,
+      user,
     };
   }
 
   private checkUserStatus(user: User) {
-    if (user.status === 'BLOCKED') {
+    if (user.status === UserStatus.BLOCKED) {
       this.logger.log(`Blocked user "${user.email}" attempted to log in`);
       throw new ForbiddenException('Account is blocked');
     }
