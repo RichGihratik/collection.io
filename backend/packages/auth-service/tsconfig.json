@@ -12,14 +12,18 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
+    "plugins": [
+      { "transform": "@nestia/core/lib/transform" },
+      { "transform": "typia/lib/transform" }
+    ],
     "paths": {
-      "@/*" : ["./src/*"]
+      "@/*": ["./src/*"]
     }
   }
 }

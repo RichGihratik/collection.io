@@ -98,7 +98,7 @@ export class AuthService {
     };
   }
 
-  private checkUserStatus(user: User | undefined) {
+  private checkUserStatus(user: User) {
     if (user.status === 'BLOCKED') {
       this.logger.log(`Blocked user "${user.email}" attempted to log in`);
       throw new ForbiddenException('Account is blocked');
