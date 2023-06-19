@@ -1,12 +1,12 @@
-import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
-
-export class SigninDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
+export interface SigninDto {
+  /**
+   * @format email
+   */
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
+  /**
+   * @minLength 1
+   * @maxLength 50
+   */
   password: string;
 }

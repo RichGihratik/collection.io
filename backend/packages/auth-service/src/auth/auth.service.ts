@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { hash, compare } from 'bcrypt';
+import { sanitize } from 'isomorphic-dompurify';
 import { CreateTokenService } from '@collection.io/access-jwt';
 import { DatabaseService, User } from '@collection.io/prisma';
 
-import { SigninDto, SignupDto } from './dto';
+import { SigninDto, SignupDto, TokenDto } from './dto';
 import { RefreshService } from './refresh';
 
 @Injectable()
@@ -22,7 +23,7 @@ export class AuthService {
     private refreshJwt: RefreshService,
   ) {}
 
-  async signin(res: FastifyReply, dto: SigninDto) {
+  async signin(res: FastifyReply, dto: SigninDto): Promise<TokenDto> {
     const { email, password } = dto;
 
     const user = await this.db.user.findUnique({
@@ -54,7 +55,7 @@ export class AuthService {
     };
   }
 
-  async signup(res: FastifyReply, dto: SignupDto) {
+  async signup(res: FastifyReply, dto: SignupDto): Promise<TokenDto> {
     const { name, email, password } = dto;
 
     let user = await this.db.user.findUnique({
@@ -70,7 +71,9 @@ export class AuthService {
 
     const hash = await this.hashPassword(password);
 
-    user = await this.db.user.create({ data: { name, email, hash } });
+    user = await this.db.user.create({
+      data: { name: sanitize(name), email, hash },
+    });
 
     await this.refreshJwt.setRefreshToken(user, res);
     const access = await this.accessJwt.createToken(user);
@@ -82,12 +85,12 @@ export class AuthService {
     };
   }
 
-  signout(req: FastifyRequest, res: FastifyReply) {
-    this.refreshJwt.removeToken(req, res);
+  async signout(req: FastifyRequest, res: FastifyReply) {
+    await this.refreshJwt.removeToken(req, res);
     return 'Logged out sucessfully';
   }
 
-  async refresh(req: FastifyRequest, res: FastifyReply) {
+  async refresh(req: FastifyRequest, res: FastifyReply): Promise<TokenDto> {
     const user = await this.refreshJwt.useToken(req, res);
     const access = await this.accessJwt.createToken(user);
 

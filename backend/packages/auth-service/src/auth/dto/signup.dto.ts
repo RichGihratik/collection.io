@@ -1,19 +1,18 @@
-import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
-import { sanitize } from 'isomorphic-dompurify';
-import { Transform } from 'class-transformer';
-
-export class SignupDto {
-  @IsNotEmpty()
-  @IsString()
-  @Transform(({ value }) => sanitize(value))
+export interface SignupDto {
+  /**
+   * @minLength 1
+   * @maxLength 30
+   */
   name: string;
 
-  @IsNotEmpty()
-  @IsString()
+  /**
+   * @minLength 1
+   * @maxLength 50
+   */
   password: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
+  /**
+   * @format email
+   */
   email: string;
 }
