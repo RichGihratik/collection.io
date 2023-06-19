@@ -59,8 +59,8 @@ export class AuthService {
   async signup(res: FastifyReply, dto: SignupDto): Promise<TokenDto> {
     const { name, email, password } = dto;
 
-    const user = await this.db.$transaction(async () => {
-      let user = await this.db.user.findUnique({
+    const user = await this.db.$transaction(async (tx) => {
+      let user = await tx.user.findUnique({
         where: { email },
       });
 
@@ -71,7 +71,7 @@ export class AuthService {
 
       const hash = await this.hashPassword(password);
 
-      user = await this.db.user.create({
+      user = await tx.user.create({
         data: {
           name: sanitize(name),
           email,

@@ -39,6 +39,10 @@ export class RefreshService {
     res.clearCookie(TOKEN_COOKIE_KEY, COOKIE_OPTIONS);
   }
 
+  private setCookie(token: string, res: FastifyReply) {
+    res.setCookie(TOKEN_COOKIE_KEY, token, COOKIE_OPTIONS);
+  }
+
   private async verifyRequest(req: FastifyRequest, res: FastifyReply) {
     this.logger.log('Checking token in cookie...');
     const token = this.extractToken(req);
@@ -61,6 +65,7 @@ export class RefreshService {
     const user = await this.db.user.findUnique({
       where: { id: payload[JwtFields.Id] },
     });
+
     if (!user) {
       this.logger.log(
         `User with id ${
@@ -68,26 +73,16 @@ export class RefreshService {
         } was not found. Clearing cookie and history...`,
       );
       this.clearToken(res);
-      this.history.invalidateAll(payload[JwtFields.Id]);
+      await this.history.invalidateAll(payload[JwtFields.Id]);
       throw new UnauthorizedException('User does not exist');
     } else if (user.status === UserStatus.BLOCKED) {
       this.logger.log(`User "${user.email}" is blocked. Clearing cookie...`);
       this.clearToken(res);
-      this.history.invalidateToken(user.id, token);
+      await this.history.invalidateAll(user.id);
       throw new ForbiddenException('User is blocked');
     }
 
-    this.logger.log(`Found user "${user.email}". Checking token history...`);
-    if (!(await this.history.checkToken(user.id, token))) {
-      this.clearToken(res);
-      await this.history.invalidateAll(user.id);
-      this.logger.warn(
-        `User ${user.email} attempted to refresh with used token. All tokens has been invalidated`,
-      );
-      throw new ForbiddenException('Attempt to refresh with used token');
-    }
-
-    this.logger.log(`Token is fully valid`);
+    this.logger.log(`Token of "${user.email}" is valid`);
     return {
       user,
       token,
@@ -97,15 +92,21 @@ export class RefreshService {
   async setRefreshToken(user: User, res: FastifyReply) {
     const token = await this.jwt.createToken(user);
     await this.history.registerToken(user.id, token);
-
-    res.setCookie(TOKEN_COOKIE_KEY, token, COOKIE_OPTIONS);
+    this.setCookie(token, res);
   }
 
   async useToken(req: FastifyRequest, res: FastifyReply) {
     const { user, token } = await this.verifyRequest(req, res);
-    await this.history.invalidateToken(user.id, token);
-    this.logger.log('Current token has been invalidated. Setting new token...');
-    await this.setRefreshToken(user, res);
+    const newToken = await this.jwt.createToken(user);
+    this.logger.log(`Checking token history and updating token...`);
+    if (!(await this.history.useToken(user.id, token, newToken))) {
+      this.clearToken(res);
+      this.logger.warn(
+        `User ${user.email} attempted to refresh with used token. All tokens has been invalidated`,
+      );
+      throw new ForbiddenException('Attempt to refresh with used token');
+    }
+    this.setCookie(newToken, res);
     this.logger.log(`User ${user.email} updated refresh token`);
     return user;
   }

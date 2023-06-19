@@ -1,60 +1,83 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { hash, compare } from 'bcrypt';
-import { Cache } from 'cache-manager';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import { createClient, RedisClientType, WatchError } from 'redis';
+import { REDIS_URL_KEY, TOKEN_SALT_KEY } from './const';
+import {
+  ContextCtor,
+  configContext,
+  HistoryContext,
+  getKeyFromId,
+} from './token-history-context';
 
 @Injectable()
 export class TokenHistoryService {
-  constructor(@Inject(CACHE_MANAGER) private cache: Cache) {}
+  private store: RedisClientType;
+  private ctor: ContextCtor;
 
-  private getKeyFromId(id: number) {
-    return `${id}:user-token-history`;
+  constructor(cfg: ConfigService) {
+    this.store = createClient({ url: cfg.get<string>(REDIS_URL_KEY) });
+    this.ctor = configContext(
+      this.store,
+      cfg.get<string>(TOKEN_SALT_KEY) ?? '',
+    );
   }
 
-  private async getHistory(id: number): Promise<string[] | undefined> {
-    return await this.cache.get<string[]>(this.getKeyFromId(id));
+  private async checkConnection() {
+    if (!this.store.isReady) await this.store.connect();
   }
 
-  private async setHistory(id: number, history?: string[]) {
-    if (history) await this.cache.set(this.getKeyFromId(id), history);
-    else await this.cache.del(this.getKeyFromId(id));
-  }
-
-  private async hashToken(token: string) {
-    const saltRounds = 10;
-    return await hash(token, saltRounds);
-  }
+  // Public methods
 
   async invalidateToken(id: number, token: string) {
-    const history = await this.getHistory(id);
-    if (history) {
-      for (const [index, item] of history.entries()) {
-        if (await compare(token, item)) history.splice(index, 1);
-      }
-      await this.setHistory(id, history);
-    }
+    await this.checkConnection();
+    return await new this.ctor(id).remove(token);
   }
 
   async invalidateAll(id: number) {
-    await this.setHistory(id);
+    await this.checkConnection();
+    return await new this.ctor(id).clearAll();
   }
 
   async checkToken(id: number, token: string) {
-    const history = await this.getHistory(id);
-
-    if (!history) return false;
-
-    for (const item of history) {
-      if (await compare(token, item)) return true;
-    }
-
-    return false;
+    await this.checkConnection();
+    return await new this.ctor(id).isExist(token);
   }
 
   async registerToken(id: number, token: string) {
-    const history = (await this.getHistory(id)) ?? [];
-    const hash = await this.hashToken(token);
-    history.push(hash);
-    await this.setHistory(id, history);
+    await this.checkConnection();
+    return await new this.ctor(id).add(token);
+  }
+
+  async execute(id: number, body: (ctx: HistoryContext) => Promise<boolean>) {
+    await this.checkConnection();
+    const tries = 100;
+    for (let i = 0; i < tries; i++) {
+      try {
+        return await this.store.executeIsolated(async (client) => {
+          const store = client.multi();
+          const ctx = new this.ctor(id, store);
+          await client.watch(getKeyFromId(id));
+          const res = await body(ctx);
+          await store.exec();
+          return res;
+        });
+      } catch (err) {
+        if (!(err instanceof WatchError)) throw err;
+      }
+    }
+    throw new Error('Too much tries to perform transaction!');
+  }
+
+  async useToken(id: number, oldToken: string, newToken: string) {
+    return await this.execute(id, async (ctx) => {
+      if (!(await ctx.isExist(oldToken))) {
+        ctx.clearAll();
+        return false;
+      }
+      ctx.remove(oldToken);
+      ctx.add(newToken);
+      return true;
+    });
   }
 }
