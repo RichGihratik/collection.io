@@ -7,7 +7,7 @@ import {
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { CookieSerializeOptions } from '@fastify/cookie';
 import { JwtFields } from '@collection.io/access-jwt';
-import { User, DatabaseService } from '@collection.io/prisma';
+import { User, DatabaseService, UserStatus } from '@collection.io/prisma';
 
 import { TOKEN_COOKIE_KEY } from './const';
 import { RefreshJwtService } from './refresh-jwt.service';
@@ -21,7 +21,7 @@ const COOKIE_OPTIONS: CookieSerializeOptions = {
 
 @Injectable()
 export class RefreshService {
-  private logger = new Logger('Refresh');
+  private logger = new Logger('Refresh', { timestamp: true });
 
   constructor(
     private jwt: RefreshJwtService,
@@ -40,12 +40,14 @@ export class RefreshService {
   }
 
   private async verifyRequest(req: FastifyRequest, res: FastifyReply) {
+    this.logger.log('Checking token in cookie...');
     const token = this.extractToken(req);
     if (!token) {
       this.logger.log('Token was not found.');
       throw new UnauthorizedException('User unauthorized');
     }
 
+    this.logger.log('Found token in cookie. Verifying token sign...');
     const payload = this.jwt.verifyToken(token);
     if (!payload) {
       this.logger.log(
@@ -55,10 +57,10 @@ export class RefreshService {
       throw new UnauthorizedException('User unauthorized');
     }
 
+    this.logger.log('Token sign is valid. Checking db info...');
     const user = await this.db.user.findUnique({
       where: { id: payload[JwtFields.Id] },
     });
-
     if (!user) {
       this.logger.log(
         `User with id ${
@@ -68,8 +70,14 @@ export class RefreshService {
       this.clearToken(res);
       this.history.invalidateAll(payload[JwtFields.Id]);
       throw new UnauthorizedException('User does not exist');
+    } else if (user.status === UserStatus.BLOCKED) {
+      this.logger.log(`User "${user.email}" is blocked. Clearing cookie...`);
+      this.clearToken(res);
+      this.history.invalidateToken(user.id, token);
+      throw new ForbiddenException('User is blocked');
     }
 
+    this.logger.log(`Found user "${user.email}". Checking token history...`);
     if (!(await this.history.checkToken(user.id, token))) {
       this.clearToken(res);
       await this.history.invalidateAll(user.id);
@@ -79,6 +87,7 @@ export class RefreshService {
       throw new ForbiddenException('Attempt to refresh with used token');
     }
 
+    this.logger.log(`Token is fully valid`);
     return {
       user,
       token,
@@ -95,6 +104,7 @@ export class RefreshService {
   async useToken(req: FastifyRequest, res: FastifyReply) {
     const { user, token } = await this.verifyRequest(req, res);
     await this.history.invalidateToken(user.id, token);
+    this.logger.log('Current token has been invalidated. Setting new token...');
     await this.setRefreshToken(user, res);
     this.logger.log(`User ${user.email} updated refresh token`);
     return user;
