@@ -3,7 +3,6 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import helmet from '@fastify/helmet';
@@ -19,7 +18,6 @@ async function bootstrap() {
     origin: config.get<string>('CLIENT_URL'),
     credentials: true,
   });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   await app.register(helmet);
   await app.register(fastifyCookie);

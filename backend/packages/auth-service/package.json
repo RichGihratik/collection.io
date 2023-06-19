@@ -7,8 +7,7 @@
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
-    "prepare": "ts-patch install",
-    "build": "nest build",
+    "build": "ts-patch install && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
