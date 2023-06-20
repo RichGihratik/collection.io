@@ -51,7 +51,7 @@ export function configContext(
 
     async add(token: string) {
       await this.client.sAdd(this.key, this.hashToken(token));
-      await this.client.expire(this.key, ms(EXPIRE_IN) * 1000);
+      await this.client.expire(this.key, ms(EXPIRE_IN) / 1000);
     }
 
     async clearAll() {

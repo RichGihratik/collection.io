@@ -9,14 +9,16 @@ import { CookieSerializeOptions } from '@fastify/cookie';
 import { JwtFields } from '@collection.io/access-jwt';
 import { User, DatabaseService, UserStatus } from '@collection.io/prisma';
 
-import { TOKEN_COOKIE_KEY } from './const';
+import { EXPIRE_IN, TOKEN_COOKIE_KEY } from './const';
 import { RefreshJwtService } from './refresh-jwt.service';
 import { TokenHistoryService } from './token-history.service';
+import ms from 'ms';
 
 const COOKIE_OPTIONS: CookieSerializeOptions = {
   sameSite: 'none',
   httpOnly: true,
-  secure: false,
+  secure: true,
+  maxAge: ms(EXPIRE_IN) / 1000,
 };
 
 @Injectable()
@@ -36,11 +38,17 @@ export class RefreshService {
   }
 
   private clearToken(res: FastifyReply) {
-    res.clearCookie(TOKEN_COOKIE_KEY, COOKIE_OPTIONS);
+    res.clearCookie(TOKEN_COOKIE_KEY, {
+      ...COOKIE_OPTIONS,
+      domain: res.request.hostname,
+    });
   }
 
   private setCookie(token: string, res: FastifyReply) {
-    res.setCookie(TOKEN_COOKIE_KEY, token, COOKIE_OPTIONS);
+    res.setCookie(TOKEN_COOKIE_KEY, token, {
+      ...COOKIE_OPTIONS,
+      domain: res.request.hostname,
+    });
   }
 
   private async verifyRequest(req: FastifyRequest, res: FastifyReply) {
