@@ -1,5 +1,7 @@
 import { ThemeProvider, createTheme } from '@mui/material';
+import { QueryClientProvider } from 'react-query';
 import { Router } from '@/pages';
+import { queryClient } from '@/shared';
 
 const theme = createTheme({
   components: {
@@ -16,7 +18,9 @@ const theme = createTheme({
 export default function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Router />
+      <QueryClientProvider client={queryClient}>
+        <Router />
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
