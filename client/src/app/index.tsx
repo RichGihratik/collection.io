@@ -3,6 +3,8 @@ import { QueryClientProvider } from 'react-query';
 import { Router } from '@/pages';
 import { queryClient } from '@/shared';
 
+import './index.css';
+
 const theme = createTheme({
   components: {
     MuiTab: {
