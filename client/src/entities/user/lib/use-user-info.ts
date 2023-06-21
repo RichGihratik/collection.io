@@ -1,13 +1,5 @@
 import { useQuery } from 'react-query';
-import { get, getResInfo } from '@/shared';
-import { User } from './model';
-
-// TODO: Add api url
-const API_URL = '';
-
-async function getUserInfo(id: number): Promise<User> {
-  return getResInfo(await get(`${API_URL}/${id}`));
-}
+import { getUserInfo } from '../api';
 
 export const USER_QUERY_KEY = 'user';
 
