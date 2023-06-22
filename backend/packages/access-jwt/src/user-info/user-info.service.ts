@@ -1,6 +1,8 @@
 import { DatabaseService } from '@collection.io/prisma';
 import { Injectable } from '@nestjs/common';
 
+export type TUserInfo = Awaited<ReturnType<UserInfoService['getUser']>>;
+
 @Injectable()
 export class UserInfoService {
   constructor(private db: DatabaseService) {}

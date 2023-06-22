@@ -1,6 +1,5 @@
 export { AccessJwtModule } from './access-jwt.module';
-export { CreateTokenService } from './create-token.service';
+export { CreateTokenService, JwtFields, JwtPayload, isJwtPayload } from './jwt';
 export { Role } from './role.decorator';
-export { UserInfo } from './user-info.decorator';
+export { TUserInfo, UserInfoInterceptor, UserInfo } from './user-info';
 export { AuthGuard } from './auth.guard';
-export { JwtFields, JwtPayload, isJwtPayload } from './types';

@@ -6,22 +6,22 @@ import {
 import { Reflector } from '@nestjs/core';
 import { UserRole, UserStatus } from '@collection.io/prisma';
 
-import { VerifyTokenService } from './verify-token.service';
+import { VerifyTokenService, JwtFields } from './jwt';
 import { ROLES_METAKEY } from './role.decorator';
-import { UserInfoService } from './user-info.service';
-import { JwtFields, PlatformRequest } from './types';
+import { UserInfoService } from './user-info/user-info.service';
+import { PlatformRequest } from './types';
 import { Strategy } from './strategy';
 
 export const STRATEGY_KEY = 'access-jwt';
 
 @Injectable()
-export class AccessStrategy extends Strategy(STRATEGY_KEY) {
+export class AccessStrategy extends Strategy {
   constructor(
-    private db: UserInfoService,
     private jwt: VerifyTokenService,
     private reflector: Reflector,
+    private db: UserInfoService,
   ) {
-    super();
+    super(STRATEGY_KEY);
   }
 
   async validate(req: PlatformRequest, ctx: ExecutionContext) {

@@ -8,9 +8,8 @@ import {
 } from '@nestjs/config';
 import { DatabaseModule } from '@collection.io/prisma';
 
-import { VerifyTokenService } from './verify-token.service';
-import { CreateTokenService } from './create-token.service';
-import { UserInfoService } from './user-info.service';
+import { CreateTokenService, VerifyTokenService } from './jwt';
+import { UserInfoService } from './user-info';
 import { AccessStrategy } from './access.strategy';
 
 @Module({})

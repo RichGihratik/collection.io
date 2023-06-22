@@ -1,5 +1,5 @@
 import { ExecutionContext } from '@nestjs/common';
-import { User } from '@collection.io/prisma';
+import { TUserInfo } from './user-info';
 import { PlatformRequest } from './types';
 
 // User info
@@ -7,7 +7,7 @@ import { PlatformRequest } from './types';
 
 const USER_KEY = 'access-user' as const;
 
-function setUser(req: PlatformRequest, user?: User) {
+function setUser(req: PlatformRequest, user?: TUserInfo) {
   req[USER_KEY] = user;
 }
 
@@ -24,29 +24,21 @@ export interface IStrategy {
 
 export const strategyStore = new Map<string, IStrategy>();
 
-export function Strategy(key: string): { new (): IStrategy } {
-  class StrategyClass implements IStrategy {
-    constructor() {
-      strategyStore.set(key, this);
-    }
-
-    protected validate(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _req: PlatformRequest,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _ctx: ExecutionContext,
-    ): Promise<User | undefined> | User | undefined {
-      return undefined;
-    }
-
-    async verify(ctx: ExecutionContext): Promise<boolean> {
-      const req = ctx.switchToHttp().getRequest<PlatformRequest>();
-      const user = await this.validate(req, ctx);
-      if (!user) return false;
-      setUser(req, user);
-      return true;
-    }
+export abstract class Strategy implements IStrategy {
+  constructor(key: string) {
+    strategyStore.set(key, this);
   }
 
-  return StrategyClass;
+  protected abstract validate(
+    _req: PlatformRequest,
+    _ctx: ExecutionContext,
+  ): Promise<TUserInfo | undefined> | TUserInfo | undefined;
+
+  async verify(ctx: ExecutionContext): Promise<boolean> {
+    const req = ctx.switchToHttp().getRequest<PlatformRequest>();
+    const user = await this.validate(req, ctx);
+    if (!user) return false;
+    setUser(req, user);
+    return true;
+  }
 }
