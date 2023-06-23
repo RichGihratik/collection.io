@@ -1,7 +1,7 @@
 export interface UserIdsDto {
   /**
    * @type int
-   * @minLength 1
+   * @minItems 1
    */
   users: number[];
 }

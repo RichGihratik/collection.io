@@ -1,7 +1,7 @@
 {
   "name": "@collection.io/user.service",
   "version": "1.0.0",
-  "description": "User microservice for collection.io",
+  "description": "Service for managing users for collection.io",
   "packageManager": "^pnpm@8.5.1",
   "author": "RichGihratik (Cyrus)",
   "private": true,
