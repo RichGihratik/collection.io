@@ -22,19 +22,19 @@ enum UserStatus {
 }
 
 model User {
-  id                Int                 @id @default(autoincrement())
-  role              UserRole            @default(CUSTOMER)
-  createdAt         DateTime            @default(now())
-  lastLogin         DateTime            @default(now())
-  status            UserStatus          @default(ACTIVE)
+  id                Int                @id @default(autoincrement())
+  role              UserRole           @default(CUSTOMER)
+  createdAt         DateTime           @default(now())
+  lastLogin         DateTime           @default(now())
+  status            UserStatus         @default(ACTIVE)
   name              String
-  email             String              @unique
+  email             String             @unique
   hash              String
   collections       Collection[]
   collectionRatings CollectionRating[]
-  itemLikes         ItemRating[]
+  itemLikes         ItemLike[]
   comments          ItemComment[]
-  commentLikes      ItemCommentRating[]
+  commentLikes      ItemCommentLike[]
 }
 
 // Collections
@@ -51,19 +51,20 @@ enum FieldType {
 model Collection {
   id          Int                @id @default(autoincrement())
   name        String
-  theme       String
   description String
+  theme       CollectionTheme?   @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  themeId     Int?
   fields      FieldConfig[]
   items       Item[]
-  rating      CollectionRating[]
+  ratings     CollectionRating[]
 
-  owner   User @relation(fields: [ownerId], references: [id])
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId Int
 }
 
 model FieldConfig {
   id           Int         @id @default(autoincrement())
-  collection   Collection  @relation(fields: [collectionId], references: [id])
+  collection   Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
   fieldType    FieldType[]
   values       ItemValue[]
@@ -72,12 +73,18 @@ model FieldConfig {
 model Item {
   id           Int           @id @default(autoincrement())
   name         String
-  collection   Collection    @relation(fields: [collectionId], references: [id])
+  collection   Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   fields       ItemValue[]
   collectionId Int
   comments     ItemComment[]
-  rating       ItemRating[]
+  likes        ItemLike[]
   tags         ItemTag[]
+}
+
+model CollectionTheme {
+  id          Int          @id @default(autoincrement())
+  name        String
+  collections Collection[]
 }
 
 model ItemTag {
@@ -88,8 +95,8 @@ model ItemTag {
 
 model ItemValue {
   value    String
-  type     FieldConfig @relation(fields: [configId], references: [id])
-  item     Item        @relation(fields: [itemId], references: [id])
+  type     FieldConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+  item     Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId   Int
   configId Int
 
@@ -99,11 +106,11 @@ model ItemValue {
 // Rating
 // ======================================
 
-model ItemCommentRating {
-  owner     User        @relation(fields: [ownerId], references: [id])
+model ItemCommentLike {
+  owner     User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId   Int
   like      Boolean
-  comment   ItemComment @relation(fields: [commentId], references: [id])
+  comment   ItemComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId Int
 
   @@id([commentId, ownerId])
@@ -111,19 +118,19 @@ model ItemCommentRating {
 
 model CollectionRating {
   rating       Int
-  owner        User       @relation(fields: [ownerId], references: [id])
+  owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId      Int
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
 
   @@id([ownerId, collectionId])
 }
 
-model ItemRating {
-  owner   User    @relation(fields: [ownerId], references: [id])
+model ItemLike {
+  owner   User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId Int
   like    Boolean
-  item    Item    @relation(fields: [itemId], references: [id])
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId  Int
 
   @@id([itemId, ownerId])
@@ -133,13 +140,13 @@ model ItemRating {
 // ======================================
 
 model ItemComment {
-  id        Int                 @id @default(autoincrement())
-  item      Item                @relation(fields: [itemId], references: [id])
+  id        Int               @id @default(autoincrement())
+  item      Item              @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    Int
-  author    User                @relation(fields: [authorId], references: [id])
+  author    User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-  ratings   ItemCommentRating[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  likes     ItemCommentLike[]
   content   String
 }
