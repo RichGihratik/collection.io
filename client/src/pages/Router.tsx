@@ -1,6 +1,8 @@
 import { Typography } from '@mui/material';
-import { AccountCircle, CollectionsBookmark } from '@mui/icons-material';
+import { AccountCircle } from '@mui/icons-material';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+import { SigninForm, SignupForm } from '@/features/auth';
 
 const router = createBrowserRouter([
   {
@@ -23,19 +25,13 @@ const router = createBrowserRouter([
   {
     path: '/auth',
     element: (
-      <Typography variant="h3" fontWeight="bold">
-        <AccountCircle />
-        Auth
-      </Typography>
+      <SigninForm redirectTo='/auth'/>
     ),
   },
   {
     path: '/collections',
     element: (
-      <Typography variant="h3" fontWeight="bold">
-        <CollectionsBookmark />
-        Collection search
-      </Typography>
+      <SignupForm redirectTo='/collections'/>
     ),
   },
 ]);

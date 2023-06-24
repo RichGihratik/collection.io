@@ -191,6 +191,94 @@ importers:
         specifier: ^5.1.3
         version: 5.1.3
 
+  packages/collection-service:
+    dependencies:
+      '@collection.io/access-jwt':
+        specifier: workspace:^
+        version: link:../access-jwt
+      '@collection.io/prisma':
+        specifier: workspace:^
+        version: link:../prisma
+      '@fastify/helmet':
+        specifier: ^10.1.1
+        version: 10.1.1
+      '@nestia/core':
+        specifier: ^1.3.8
+        version: 1.4.0(@nestia/fetcher@1.4.0)(@nestjs/common@10.0.3)(@nestjs/core@10.0.3)(@nestjs/platform-express@10.0.3)(@nestjs/platform-fastify@10.0.3)(raw-body@2.5.2)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.1.3)(typia@4.1.1)
+      '@nestjs/common':
+        specifier: ^10.0.1
+        version: 10.0.3(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^3.0.0
+        version: 3.0.0(@nestjs/common@10.0.3)(reflect-metadata@0.1.13)
+      '@nestjs/core':
+        specifier: ^10.0.1
+        version: 10.0.3(@nestjs/common@10.0.3)(@nestjs/platform-express@10.0.3)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/platform-fastify':
+        specifier: ^10.0.1
+        version: 10.0.3(@nestjs/common@10.0.3)(@nestjs/core@10.0.3)
+      fastify:
+        specifier: ^4.18.0
+        version: 4.18.0
+      reflect-metadata:
+        specifier: ^0.1.13
+        version: 0.1.13
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@nestia/sdk':
+        specifier: ^1.3.16
+        version: 1.4.0(@nestia/fetcher@1.4.0)(@nestjs/common@10.0.3)(@nestjs/core@10.0.3)(reflect-metadata@0.1.13)(ts-node@10.9.1)(typescript@5.1.3)(typia@4.1.1)
+      '@nestjs/cli':
+        specifier: ^10.0.2
+        version: 10.0.3
+      '@nestjs/schematics':
+        specifier: ^10.0.1
+        version: 10.0.1(chokidar@3.5.3)(typescript@5.1.3)
+      '@types/node':
+        specifier: 20.3.1
+        version: 20.3.1
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.59.11
+        version: 5.60.0(@typescript-eslint/parser@5.60.0)(eslint@8.43.0)(typescript@5.1.3)
+      '@typescript-eslint/parser':
+        specifier: ^5.59.11
+        version: 5.60.0(eslint@8.43.0)(typescript@5.1.3)
+      eslint:
+        specifier: ^8.43.0
+        version: 8.43.0
+      eslint-config-prettier:
+        specifier: ^8.8.0
+        version: 8.8.0(eslint@8.43.0)
+      eslint-plugin-prettier:
+        specifier: ^4.2.1
+        version: 4.2.1(eslint-config-prettier@8.8.0)(eslint@8.43.0)(prettier@2.8.8)
+      nestia:
+        specifier: ^4.3.2
+        version: 4.3.2
+      prettier:
+        specifier: ^2.8.8
+        version: 2.8.8
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-loader:
+        specifier: ^9.4.3
+        version: 9.4.3(typescript@5.1.3)(webpack@5.88.0)
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@20.3.1)(typescript@5.1.3)
+      ts-patch:
+        specifier: ^3.0.0
+        version: 3.0.0
+      tsconfig-paths:
+        specifier: 4.2.0
+        version: 4.2.0
+      typescript:
+        specifier: ^5.1.3
+        version: 5.1.3
+
   packages/prisma:
     dependencies:
       '@prisma/client':
