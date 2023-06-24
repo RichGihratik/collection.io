@@ -66,7 +66,7 @@ model FieldConfig {
   id           Int         @id @default(autoincrement())
   collection   Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
-  fieldType    FieldType[]
+  fieldType    FieldType
   values       ItemValue[]
 }
 
