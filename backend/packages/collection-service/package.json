@@ -26,6 +26,7 @@
     "@nestjs/core": "^10.0.1",
     "@nestjs/platform-fastify": "^10.0.1",
     "fastify": "^4.18.0",
+    "isomorphic-dompurify": "^1.6.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
   },

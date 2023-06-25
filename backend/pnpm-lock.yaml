@@ -220,6 +220,9 @@ importers:
       fastify:
         specifier: ^4.18.0
         version: 4.18.0
+      isomorphic-dompurify:
+        specifier: ^1.6.0
+        version: 1.6.0
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
@@ -282,8 +285,8 @@ importers:
   packages/prisma:
     dependencies:
       '@prisma/client':
-        specifier: ^4.16.0
-        version: 4.16.0(prisma@4.16.0)
+        specifier: ^4.16.1
+        version: 4.16.1(prisma@4.16.0)
       prisma:
         specifier: ^4.16.0
         version: 4.16.0
@@ -1173,8 +1176,8 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@prisma/client@4.16.0(prisma@4.16.0):
-    resolution: {integrity: sha512-CBD+5IdZPiavhLkQokvsz1uz4r9ppixaqY/ajybWs4WXNnsDVMBKEqN3BiPzpSo79jiy22VKj/67pqt4VwIg9w==}
+  /@prisma/client@4.16.1(prisma@4.16.0):
+    resolution: {integrity: sha512-CoDHu7Bt+NuDo40ijoeHP79EHtECsPBTy3yte5Yo3op8TqXt/kV0OT5OrsWewKvQGKFMHhYQ+ePed3zzjYdGAw==}
     engines: {node: '>=14.17'}
     requiresBuild: true
     peerDependencies:
