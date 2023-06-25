@@ -1,7 +1,10 @@
 import { DatabaseService } from '@collection.io/prisma';
 import { Injectable } from '@nestjs/common';
 
-export type TUserInfo = Awaited<ReturnType<UserInfoService['getUser']>>;
+export type TUserInfo = Exclude<
+  Awaited<ReturnType<UserInfoService['getUser']>>,
+  null
+>;
 
 @Injectable()
 export class UserInfoService {
