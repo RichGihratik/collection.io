@@ -2,12 +2,12 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { DatabaseService, UserRole } from '@collection.io/prisma';
+import { Collection, DatabaseService, UserRole } from '@collection.io/prisma';
 import { TUserInfo } from '@collection.io/access-jwt';
 import { sanitize } from 'isomorphic-dompurify';
+import { checkPermissions } from './check-permisson';
 import {
   CreateCollectionDto,
   DeleteCollectionDto,
@@ -97,51 +97,14 @@ export class CollectionService {
     };
   }
 
-  private async checkPermissions(
-    client: Parameters<Parameters<typeof this.db.$transaction>[0]>[0],
-    info: TUserInfo,
-    collectionId: number,
-    id?: number | null,
-  ) {
-    if (!info)
-      throw new InternalServerErrorException(
-        'CRUD method call without authorization',
-      );
-    if (id && info.id !== id && info.role !== UserRole.ADMIN) {
-      throw new ForbiddenException(
-        `You can't update collection of another user`,
-      );
-    } else {
-      const user = await client.user.findUnique({
-        where: { id: collectionId },
-      });
-      if (!user)
-        throw new BadRequestException(
-          `Can't assign collection to non existing user`,
-        );
-    }
-
-    return await client.collection.findUnique({
-      where: { id: collectionId },
-      select: {
-        ownerId: true,
-      },
-    });
-  }
-
   private sanitizeDto(dto: CreateCollectionDto | UpdateCollectionDto) {
     if (dto.name) dto.name = sanitize(dto.name);
     if (dto.description) dto.description = sanitize(dto.description);
   }
 
-  async create(info: TUserInfo, dto: CreateCollectionDto) {
+  async create(info: TUserInfo, dto: CreateCollectionDto): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      const collection = await this.checkPermissions(
-        dbx,
-        info,
-        dto.id,
-        info.id,
-      );
+      const collection = await checkPermissions(dbx, info, dto.id, info.id);
 
       if (collection)
         throw new BadRequestException('Collection already exists!');
@@ -165,14 +128,9 @@ export class CollectionService {
     });
   }
 
-  async update(info: TUserInfo, dto: UpdateCollectionDto) {
+  async update(info: TUserInfo, dto: UpdateCollectionDto): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      const collection = await this.checkPermissions(
-        dbx,
-        info,
-        dto.id,
-        info.id,
-      );
+      const collection = await checkPermissions(dbx, info, dto.id, info.id);
 
       if (!collection) throw new NotFoundException('Collection was not found!');
 
@@ -185,11 +143,8 @@ export class CollectionService {
 
       for (const [key, value] of Object.entries(dto)) {
         if (key === 'id') continue;
-        if (value !== undefined)
-          newData[key] = value === null ? undefined : value;
+        if (value !== undefined) newData[key] = value;
       }
-
-      // TODO Create update for columns
 
       return await dbx.collection.update({
         where: { id: dto.id },
@@ -200,14 +155,9 @@ export class CollectionService {
     });
   }
 
-  async delete(info: TUserInfo, dto: DeleteCollectionDto) {
+  async delete(info: TUserInfo, dto: DeleteCollectionDto): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      const collection = await this.checkPermissions(
-        dbx,
-        info,
-        dto.id,
-        info.id,
-      );
+      const collection = await checkPermissions(dbx, info, dto.id, info.id);
 
       if (!collection) throw new NotFoundException('Collection was not found!');
 

@@ -1,4 +1,10 @@
-import { Controller, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
 import {
   AuthGuard,
@@ -39,35 +45,39 @@ export class CollectionController {
   }
 
   @TypedRoute.Post('create')
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard)
-  create(
+  async create(
     @TypedBody()
     dto: CreateCollectionDto,
     @UserInfo()
     info: TUserInfo,
   ) {
-    return this.service.create(info, dto);
+    await this.service.create(info, dto);
+    return 'Created successfully';
   }
 
   @TypedRoute.Patch('update')
   @UseGuards(AuthGuard)
-  update(
+  async update(
     @TypedBody()
     dto: UpdateCollectionDto,
     @UserInfo()
     info: TUserInfo,
   ) {
-    return this.service.update(info, dto);
+    await this.service.update(info, dto);
+    return 'Updated successfully';
   }
 
   @TypedRoute.Delete('delete')
   @UseGuards(AuthGuard)
-  delete(
+  async delete(
     @TypedBody()
     dto: DeleteCollectionDto,
     @UserInfo()
     info: TUserInfo,
   ) {
-    return this.service.delete(info, dto);
+    await this.service.delete(info, dto);
+    return 'Deleted successfully';
   }
 }
