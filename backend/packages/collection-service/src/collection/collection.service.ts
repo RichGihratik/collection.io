@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -7,6 +6,7 @@ import {
 import { Collection, DatabaseService, UserRole } from '@collection.io/prisma';
 import { TUserInfo } from '@collection.io/access-jwt';
 import { sanitize } from 'isomorphic-dompurify';
+import { sanitizeFields } from './sanitize-fields';
 import { checkPermissions } from './check-permisson';
 import {
   CreateCollectionDto,
@@ -42,7 +42,7 @@ export class CollectionService {
         },
         fields: {
           select: {
-            fieldType: true,
+            type: true,
           },
         },
         owner: {
@@ -61,7 +61,7 @@ export class CollectionService {
 
     if (!collection) throw new NotFoundException('Collection was not found');
 
-    const fields = collection.fields.map((obj) => obj.fieldType);
+    const fields = collection.fields.map((obj) => obj.type);
     const theme = collection.theme?.name ?? 'Other';
     const itemsCount = collection._count.items;
 
@@ -104,10 +104,10 @@ export class CollectionService {
 
   async create(info: TUserInfo, dto: CreateCollectionDto): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      const collection = await checkPermissions(dbx, info, dto.id, info.id);
-
-      if (collection)
-        throw new BadRequestException('Collection already exists!');
+      if (info.role !== UserRole.ADMIN && info.id !== dto.ownerId)
+        throw new ForbiddenException(
+          `Can not create collection to another user`,
+        );
 
       this.sanitizeDto(dto);
 
@@ -116,11 +116,7 @@ export class CollectionService {
           ...dto,
           fields: {
             createMany: {
-              data: dto.fields.map((field) => ({
-                fieldType: field.type,
-                name: field.name,
-                collection: { connect: { id: dto.id } },
-              })),
+              data: sanitizeFields(dto.fields),
             },
           },
         },

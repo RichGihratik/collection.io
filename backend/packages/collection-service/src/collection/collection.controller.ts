@@ -17,12 +17,17 @@ import {
   UpdateCollectionDto,
   DeleteCollectionDto,
   SearchOptionsDto,
+  UpdateFieldsDto,
 } from './dto';
 import { CollectionService } from './collection.service';
+import { FieldConfigService } from './field-config.service';
 
 @Controller('collection')
 export class CollectionController {
-  constructor(private collection: CollectionService) {}
+  constructor(
+    private collection: CollectionService,
+    private fieldConfig: FieldConfigService,
+  ) {}
 
   @TypedRoute.Get('search')
   @UseInterceptors(UserInfoInterceptor)
@@ -79,5 +84,19 @@ export class CollectionController {
   ) {
     await this.collection.delete(info, dto);
     return 'Deleted successfully';
+  }
+
+  @TypedRoute.Patch(':id/fields/update')
+  @UseGuards(AuthGuard)
+  async updateFields(
+    @TypedParam('id')
+    id: number,
+    @TypedBody()
+    dto: UpdateFieldsDto,
+    @UserInfo()
+    info: TUserInfo,
+  ) {
+    await this.fieldConfig.update(id, info, dto);
+    return 'Updated successfully';
   }
 }
