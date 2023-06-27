@@ -1,5 +1,6 @@
-import { CollectionId, CollectionProps } from './common';
+import { ObjectWithId } from '@/common';
+import { CollectionProps } from './common';
 
 export interface UpdateCollectionDto
-  extends CollectionId,
+  extends ObjectWithId,
     Partial<CollectionProps> {}

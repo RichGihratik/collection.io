@@ -1,3 +1,3 @@
-import { CollectionId } from './common';
+import { ObjectWithId } from '@/common';
 
-export type DeleteCollectionDto = CollectionId;
+export type DeleteCollectionDto = ObjectWithId;

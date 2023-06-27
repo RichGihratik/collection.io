@@ -1,5 +1,6 @@
-import { CollectionId, Field, CollectionProps } from './common';
+import { Field } from '@/common';
+import { CollectionProps } from './common';
 
-export interface CreateCollectionDto extends CollectionId, CollectionProps {
+export interface CreateCollectionDto extends CollectionProps {
   fields: Field[];
 }

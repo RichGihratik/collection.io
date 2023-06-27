@@ -22,7 +22,7 @@ import { CollectionService } from './collection.service';
 
 @Controller('collection')
 export class CollectionController {
-  constructor(private service: CollectionService) {}
+  constructor(private collection: CollectionService) {}
 
   @TypedRoute.Get('search')
   @UseInterceptors(UserInfoInterceptor)
@@ -30,7 +30,7 @@ export class CollectionController {
     @TypedBody()
     props: SearchOptionsDto,
   ) {
-    return this.service.search(props);
+    return this.collection.search(props);
   }
 
   @TypedRoute.Get(':id')
@@ -41,7 +41,7 @@ export class CollectionController {
     @UserInfo()
     info?: TUserInfo,
   ) {
-    return this.service.get(id, info);
+    return this.collection.get(id, info);
   }
 
   @TypedRoute.Post('create')
@@ -53,7 +53,7 @@ export class CollectionController {
     @UserInfo()
     info: TUserInfo,
   ) {
-    await this.service.create(info, dto);
+    await this.collection.create(info, dto);
     return 'Created successfully';
   }
 
@@ -65,7 +65,7 @@ export class CollectionController {
     @UserInfo()
     info: TUserInfo,
   ) {
-    await this.service.update(info, dto);
+    await this.collection.update(info, dto);
     return 'Updated successfully';
   }
 
@@ -77,7 +77,7 @@ export class CollectionController {
     @UserInfo()
     info: TUserInfo,
   ) {
-    await this.service.delete(info, dto);
+    await this.collection.delete(info, dto);
     return 'Deleted successfully';
   }
 }

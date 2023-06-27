@@ -1,3 +1,5 @@
+import { ObjectWithId } from '@/common';
+
 interface ThemeName {
   /**
    * @maxLength 30
@@ -5,13 +7,6 @@ interface ThemeName {
   name: string;
 }
 
-interface ThemeId {
-  /**
-   * @type int
-   */
-  id: number;
-}
-
 export type CreateThemeDto = ThemeName;
-export interface UpdateThemeDto extends ThemeId, ThemeName {}
-export type DeleteThemeDto = ThemeId;
+export interface UpdateThemeDto extends ObjectWithId, ThemeName {}
+export type DeleteThemeDto = ObjectWithId;
