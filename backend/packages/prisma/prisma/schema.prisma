@@ -67,7 +67,7 @@ model FieldConfig {
   collection   Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
   name         String
-  fieldType    FieldType
+  type         FieldType   @map("fieldType")
   values       ItemValue[]
 }
 
