@@ -21,7 +21,7 @@ export class FieldConfigService {
           collectionId: id,
         })),
         update: sanitizeFields(dto.update),
-        delete: dto.delete.map((item) => item.id),
+        delete: dto.delete.map((item) => item.name),
       };
 
       await dbx.fieldConfig.createMany({
@@ -34,7 +34,8 @@ export class FieldConfigService {
 
       await dbx.fieldConfig.deleteMany({
         where: {
-          id: {
+          collectionId: id,
+          name: {
             in: sanitizedDto.delete,
           },
         },

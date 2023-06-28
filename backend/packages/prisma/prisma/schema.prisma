@@ -63,12 +63,13 @@ model Collection {
 }
 
 model FieldConfig {
-  id           Int         @id @default(autoincrement())
   collection   Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
   name         String
   type         FieldType   @map("fieldType")
   values       ItemValue[]
+
+  @@id([name, collectionId])
 }
 
 model Item {
@@ -95,13 +96,14 @@ model ItemTag {
 }
 
 model ItemValue {
-  value    String
-  type     FieldConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
-  item     Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  itemId   Int
-  configId Int
+  value        String
+  config       FieldConfig @relation(fields: [fieldName, collectionId], references: [name, collectionId], onDelete: Cascade)
+  fieldName    String
+  collectionId Int
+  item         Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId       Int
 
-  @@id([itemId, configId])
+  @@id([itemId, fieldName, collectionId])
 }
 
 // Rating

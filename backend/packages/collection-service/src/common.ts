@@ -7,10 +7,13 @@ export interface ObjectWithId {
   id: number;
 }
 
-export interface Field {
+export interface ObjectWithName {
   /**
    * @maxLength 30
    */
   name: string;
+}
+
+export interface Field extends ObjectWithName {
   type: FieldType;
 }

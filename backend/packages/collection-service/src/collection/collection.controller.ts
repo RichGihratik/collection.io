@@ -5,7 +5,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
+import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import {
   AuthGuard,
   TUserInfo,
@@ -29,9 +29,8 @@ export class CollectionController {
   ) {}
 
   @TypedRoute.Get('search')
-  @UseInterceptors(UserInfoInterceptor)
   getCollections(
-    @TypedBody()
+    @TypedQuery()
     props: SearchOptionsDto,
   ) {
     return this.collection.search(props);

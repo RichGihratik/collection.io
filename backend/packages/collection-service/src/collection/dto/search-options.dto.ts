@@ -14,10 +14,10 @@ export interface SearchOptionsDto {
    * @maxLength 200
    */
   searchBy?: string;
-  orderBy?: {
-    type: OrderByType;
-    field: OrderByField;
-  };
+
+  orderBy?: OrderByField;
+  orderType?: OrderByType;
+
   /**
    * @type int
    */
