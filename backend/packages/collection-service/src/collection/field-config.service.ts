@@ -9,7 +9,7 @@ import { sanitizeFields } from './sanitize-fields';
 export class FieldConfigService {
   constructor(private db: DatabaseService) {}
 
-  async update(id: number, info: TUserInfo, dto: UpdateFieldsDto) {
+  async update(id: number, dto: UpdateFieldsDto, info: TUserInfo) {
     return this.db.$transaction(async (dbx) => {
       const collection = await checkPermissions(dbx, info, id, info.id);
 

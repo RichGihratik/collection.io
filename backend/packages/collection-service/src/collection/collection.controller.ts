@@ -15,7 +15,6 @@ import {
 import {
   CreateCollectionDto,
   UpdateCollectionDto,
-  DeleteCollectionDto,
   SearchOptionsDto,
   UpdateFieldsDto,
 } from './dto';
@@ -49,7 +48,7 @@ export class CollectionController {
     return this.collection.get(id, info);
   }
 
-  @TypedRoute.Post('create')
+  @TypedRoute.Post()
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard)
   async create(
@@ -58,35 +57,37 @@ export class CollectionController {
     @UserInfo()
     info: TUserInfo,
   ) {
-    await this.collection.create(info, dto);
+    await this.collection.create(dto, info);
     return 'Created successfully';
   }
 
-  @TypedRoute.Patch('update')
+  @TypedRoute.Patch(':id')
   @UseGuards(AuthGuard)
   async update(
+    @TypedParam('id')
+    id: number,
     @TypedBody()
     dto: UpdateCollectionDto,
     @UserInfo()
     info: TUserInfo,
   ) {
-    await this.collection.update(info, dto);
+    await this.collection.update(id, dto, info);
     return 'Updated successfully';
   }
 
-  @TypedRoute.Delete('delete')
+  @TypedRoute.Delete(':id')
   @UseGuards(AuthGuard)
   async delete(
-    @TypedBody()
-    dto: DeleteCollectionDto,
+    @TypedParam('id')
+    id: number,
     @UserInfo()
     info: TUserInfo,
   ) {
-    await this.collection.delete(info, dto);
+    await this.collection.delete(id, info);
     return 'Deleted successfully';
   }
 
-  @TypedRoute.Patch(':id/fields/update')
+  @TypedRoute.Patch(':id/fields')
   @UseGuards(AuthGuard)
   async updateFields(
     @TypedParam('id')
@@ -96,7 +97,7 @@ export class CollectionController {
     @UserInfo()
     info: TUserInfo,
   ) {
-    await this.fieldConfig.update(id, info, dto);
+    await this.fieldConfig.update(id, dto, info);
     return 'Updated successfully';
   }
 }

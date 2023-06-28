@@ -10,7 +10,6 @@ import { sanitizeFields } from './sanitize-fields';
 import { checkPermissions } from './check-permisson';
 import {
   CreateCollectionDto,
-  DeleteCollectionDto,
   SearchOptionsDto,
   UpdateCollectionDto,
 } from './dto';
@@ -102,7 +101,7 @@ export class CollectionService {
     if (dto.description) dto.description = sanitize(dto.description);
   }
 
-  async create(info: TUserInfo, dto: CreateCollectionDto): Promise<Collection> {
+  async create(dto: CreateCollectionDto, info: TUserInfo): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
       if (info.role !== UserRole.ADMIN && info.id !== dto.ownerId)
         throw new ForbiddenException(
@@ -124,14 +123,13 @@ export class CollectionService {
     });
   }
 
-  async update(info: TUserInfo, dto: UpdateCollectionDto): Promise<Collection> {
+  async update(
+    id: number,
+    dto: UpdateCollectionDto,
+    info: TUserInfo,
+  ): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      const collection = await checkPermissions(dbx, info, dto.id, info.id);
-
-      if (!collection) throw new NotFoundException('Collection was not found!');
-
-      if (info.role !== UserRole.ADMIN && collection.ownerId !== info.id)
-        throw new ForbiddenException(`Can't update another user's collection!`);
+      await checkPermissions(dbx, info, id, info.id);
 
       this.sanitizeDto(dto);
 
@@ -143,7 +141,7 @@ export class CollectionService {
       }
 
       return await dbx.collection.update({
-        where: { id: dto.id },
+        where: { id },
         data: {
           ...newData,
         },
@@ -151,16 +149,10 @@ export class CollectionService {
     });
   }
 
-  async delete(info: TUserInfo, dto: DeleteCollectionDto): Promise<Collection> {
+  async delete(id: number, info: TUserInfo): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      const collection = await checkPermissions(dbx, info, dto.id, info.id);
-
-      if (!collection) throw new NotFoundException('Collection was not found!');
-
-      if (info.role !== UserRole.ADMIN && collection.ownerId !== info.id)
-        throw new ForbiddenException(`Can't delete another user's collection!`);
-
-      return await dbx.collection.delete({ where: { id: dto.id } });
+      await checkPermissions(dbx, info, id);
+      return await dbx.collection.delete({ where: { id } });
     });
   }
 }

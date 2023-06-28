@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-jwt';
 import { DatabaseService, UserRole } from '@collection.io/prisma';
@@ -17,7 +18,7 @@ export async function checkPermissions(
       'CRUD method call without authorization',
     );
   if (ownerId && info.id !== ownerId && info.role !== UserRole.ADMIN) {
-    throw new ForbiddenException(`You can't update collection of another user`);
+    throw new ForbiddenException(`You can't assign collection to another user`);
   } else if (ownerId) {
     const user = await client.user.findUnique({
       where: { id: ownerId },
@@ -28,10 +29,19 @@ export async function checkPermissions(
       );
   }
 
-  return await client.collection.findUnique({
+  const collection = await client.collection.findUnique({
     where: { id: collectionId },
     select: {
       ownerId: true,
     },
   });
+
+  if (!collection) throw new NotFoundException('Collection was not found!');
+
+  if (info.role !== UserRole.ADMIN && collection.ownerId !== info.id)
+    throw new ForbiddenException(
+      `You can't access collection of another user!`,
+    );
+
+  return collection;
 }
