@@ -6,14 +6,21 @@ import {
 } from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-jwt';
 import { UserRole } from '@collection.io/prisma';
-import { DatabaseClient } from '@/common';
+import { DatabaseClient, Field } from '@/common';
+
+type CollectionType = {
+  name: string;
+  themeName: string | null;
+  ownerId: number;
+  fields: Field[];
+};
 
 export async function checkCollectionPermissions(
   client: DatabaseClient,
   info: TUserInfo,
   collectionId: number,
   ownerId?: number | null,
-) {
+): Promise<CollectionType> {
   if (!info)
     throw new InternalServerErrorException(
       'CRUD method call without authorization',
@@ -33,7 +40,10 @@ export async function checkCollectionPermissions(
   const collection = await client.collection.findUnique({
     where: { id: collectionId },
     select: {
+      name: true,
+      themeName: true,
       ownerId: true,
+      fields: true,
     },
   });
 
