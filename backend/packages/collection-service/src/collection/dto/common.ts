@@ -6,10 +6,7 @@ export interface CollectionProps {
 
   description: string;
 
-  /**
-   * @type int
-   */
-  themeId: number | null;
+  themeName: string | null;
 
   /**
    * @type int

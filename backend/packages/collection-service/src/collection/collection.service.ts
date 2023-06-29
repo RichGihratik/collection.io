@@ -34,11 +34,7 @@ export class CollectionService {
       select: {
         name: true,
         description: true,
-        theme: {
-          select: {
-            name: true,
-          },
-        },
+        themeName: true,
         fields: {
           select: {
             type: true,
@@ -61,7 +57,7 @@ export class CollectionService {
     if (!collection) throw new NotFoundException('Collection was not found');
 
     const fields = collection.fields.map((obj) => obj.type);
-    const theme = collection.theme?.name ?? 'Other';
+    const theme = collection.themeName ?? 'Other';
     const itemsCount = collection._count.items;
 
     const { _avg: rating, _count: votesCount } =
@@ -101,6 +97,31 @@ export class CollectionService {
     if (dto.description) dto.description = sanitize(dto.description);
   }
 
+  private getThemeQuery(themeName: string) {
+    return {
+      theme: {
+        connectOrCreate: {
+          create: {
+            name: themeName,
+          },
+          where: {
+            name: themeName,
+          },
+        },
+      },
+    } as const;
+  }
+
+  private getOwnerQuery(ownerId: number) {
+    return {
+      owner: {
+        connect: {
+          id: ownerId,
+        },
+      },
+    } as const;
+  }
+
   async create(dto: CreateCollectionDto, info: TUserInfo): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
       if (info.role !== UserRole.ADMIN && info.id !== dto.ownerId)
@@ -112,7 +133,10 @@ export class CollectionService {
 
       return await dbx.collection.create({
         data: {
-          ...dto,
+          name: dto.name,
+          description: dto.description,
+          ...this.getOwnerQuery(dto.ownerId),
+          ...(dto.themeName ? this.getThemeQuery(dto.themeName) : {}),
           fields: {
             createMany: {
               data: sanitizeFields(dto.fields),
@@ -133,17 +157,13 @@ export class CollectionService {
 
       this.sanitizeDto(dto);
 
-      const newData: Omit<UpdateCollectionDto, 'id'> = {};
-
-      for (const [key, value] of Object.entries(dto)) {
-        if (key === 'id') continue;
-        if (value !== undefined) newData[key] = value;
-      }
-
       return await dbx.collection.update({
         where: { id },
         data: {
-          ...newData,
+          name: dto.name,
+          description: dto.description,
+          ...(dto.ownerId ? this.getOwnerQuery(dto.ownerId) : {}),
+          ...(dto.themeName ? this.getThemeQuery(dto.themeName) : {}),
         },
       });
     });
