@@ -5,10 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-jwt';
-import { DatabaseService, UserRole } from '@collection.io/prisma';
+import { UserRole } from '@collection.io/prisma';
+import { DatabaseClient } from '@/common';
 
-export async function checkPermissions(
-  client: Parameters<Parameters<DatabaseService['$transaction']>[0]>[0],
+export async function checkCollectionPermissions(
+  client: DatabaseClient,
   info: TUserInfo,
   collectionId: number,
   ownerId?: number | null,

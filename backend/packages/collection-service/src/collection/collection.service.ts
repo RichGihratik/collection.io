@@ -7,7 +7,7 @@ import { Collection, DatabaseService, UserRole } from '@collection.io/prisma';
 import { TUserInfo } from '@collection.io/access-jwt';
 import { sanitize } from 'isomorphic-dompurify';
 import { sanitizeFields } from './sanitize-fields';
-import { checkPermissions } from './check-permisson';
+import { checkCollectionPermissions } from './check-permisson';
 import {
   CreateCollectionDto,
   SearchOptionsDto,
@@ -129,7 +129,7 @@ export class CollectionService {
     info: TUserInfo,
   ): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      await checkPermissions(dbx, info, id, info.id);
+      await checkCollectionPermissions(dbx, info, id, info.id);
 
       this.sanitizeDto(dto);
 
@@ -151,7 +151,7 @@ export class CollectionService {
 
   async delete(id: number, info: TUserInfo): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
-      await checkPermissions(dbx, info, id);
+      await checkCollectionPermissions(dbx, info, id);
       return await dbx.collection.delete({ where: { id } });
     });
   }

@@ -1,4 +1,4 @@
-import { FieldType } from '@collection.io/prisma';
+import { DatabaseService, FieldType } from '@collection.io/prisma';
 
 export interface ObjectWithId {
   /**
@@ -17,3 +17,7 @@ export interface ObjectWithName {
 export interface Field extends ObjectWithName {
   type: FieldType;
 }
+
+export type DatabaseClient = Parameters<
+  Parameters<DatabaseService['$transaction']>[0]
+>[0];

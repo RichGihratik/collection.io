@@ -54,12 +54,11 @@ model Collection {
   description String
   theme       CollectionTheme?   @relation(fields: [themeId], references: [id], onDelete: SetNull)
   themeId     Int?
+  owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     Int
   fields      FieldConfig[]
   items       Item[]
   ratings     CollectionRating[]
-
-  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId Int
 }
 
 model FieldConfig {
@@ -76,8 +75,8 @@ model Item {
   id           Int           @id @default(autoincrement())
   name         String
   collection   Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  fields       ItemValue[]
   collectionId Int
+  fields       ItemValue[]
   comments     ItemComment[]
   likes        ItemLike[]
   tags         ItemTag[]
