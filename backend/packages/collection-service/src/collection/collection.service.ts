@@ -12,6 +12,8 @@ import {
   CreateCollectionDto,
   SearchOptionsDto,
   UpdateCollectionDto,
+  CollectionFullInfoDto,
+  CollectionDto,
 } from './dto';
 
 @Injectable()
@@ -19,24 +21,71 @@ export class CollectionService {
   constructor(private db: DatabaseService) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async search(options: SearchOptionsDto) {
-    // TODO Make search
-    /*const limitStr = `LIMIT ${options.limit ?? 'ALL'}`;
-    const offsetStr = `OFFSET ${options.offset ?? 0}`;
-    const collections = this.db.$queryRawUnsafe(``);*/
+  async search(options: SearchOptionsDto): Promise<CollectionDto[]> {
+    const collections = await this.db.collection.findMany({
+      select: {
+        id: true,
+        name: true,
+        themeName: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        _count: {
+          select: {
+            ratings: true,
+            items: true,
+          },
+        },
+      },
+      take: options.limit,
+      skip: options.offset,
+    });
+
+    const ids = collections.map((item) => item.id);
+
+    const ratings = (
+      await this.db.collectionRating.groupBy({
+        by: ['collectionId'],
+        where: {
+          collectionId: {
+            in: ids,
+          },
+        },
+        _avg: {
+          rating: true,
+        },
+      })
+    ).reduce((acc, item) => acc.set(item.collectionId, item), new Map());
+
+    /* // TODO Make search
+    const limitStr = `LIMIT ${options.limit ?? 'ALL'}`;
+    const offsetStr = `OFFSET ${options.offset ?? 0}`;*/
+
+    return collections.map((item) => ({
+      ...item,
+      theme: item.themeName ?? 'Other',
+      itemsCount: item._count.items,
+      votesCount: item._count.ratings,
+      rating: ratings.get(item.id) ?? 0,
+    }));
   }
 
-  async get(id: number, user?: TUserInfo) {
+  async get(id: number, user?: TUserInfo): Promise<CollectionFullInfoDto> {
     const collection = await this.db.collection.findUnique({
       where: {
         id,
       },
       select: {
+        id: true,
         name: true,
         description: true,
         themeName: true,
         fields: {
           select: {
+            name: true,
             type: true,
           },
         },
@@ -49,6 +98,7 @@ export class CollectionService {
         _count: {
           select: {
             items: true,
+            ratings: true,
           },
         },
       },
@@ -56,20 +106,18 @@ export class CollectionService {
 
     if (!collection) throw new NotFoundException('Collection was not found');
 
-    const fields = collection.fields.map((obj) => obj.type);
     const theme = collection.themeName ?? 'Other';
     const itemsCount = collection._count.items;
+    const votesCount = collection._count.ratings;
 
-    const { _avg: rating, _count: votesCount } =
-      await this.db.collectionRating.aggregate({
-        where: { collectionId: id },
-        _avg: {
-          rating: true,
-        },
-        _count: {
-          _all: true,
-        },
-      });
+    const {
+      _avg: { rating },
+    } = await this.db.collectionRating.aggregate({
+      where: { collectionId: id },
+      _avg: {
+        rating: true,
+      },
+    });
 
     if (user) {
       collection['viewerRating'] = await this.db.collectionRating.findUnique({
@@ -85,7 +133,6 @@ export class CollectionService {
     return {
       ...collection,
       theme,
-      fields,
       itemsCount,
       rating: rating ?? 0,
       votesCount,

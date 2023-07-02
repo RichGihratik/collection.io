@@ -17,6 +17,8 @@ import {
   UpdateCollectionDto,
   SearchOptionsDto,
   UpdateFieldsDto,
+  CollectionDto,
+  CollectionFullInfoDto,
 } from './dto';
 import { CollectionService } from './collection.service';
 import { FieldConfigService } from './field-config.service';
@@ -28,11 +30,11 @@ export class CollectionController {
     private fieldConfig: FieldConfigService,
   ) {}
 
-  @TypedRoute.Get('search')
+  @TypedRoute.Get()
   getCollections(
     @TypedQuery()
     props: SearchOptionsDto,
-  ) {
+  ): Promise<CollectionDto[]> {
     return this.collection.search(props);
   }
 
@@ -43,7 +45,7 @@ export class CollectionController {
     id: number,
     @UserInfo()
     info?: TUserInfo,
-  ) {
+  ): Promise<CollectionFullInfoDto> {
     return this.collection.get(id, info);
   }
 
