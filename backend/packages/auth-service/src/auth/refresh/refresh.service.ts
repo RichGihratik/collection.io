@@ -6,8 +6,12 @@ import {
 } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { CookieSerializeOptions } from '@fastify/cookie';
-import { JwtFields } from '@collection.io/access-jwt';
-import { User, DatabaseService, UserStatus } from '@collection.io/prisma';
+import {
+  JwtFields,
+  UserInfoSelectQuery,
+  TUserInfo,
+} from '@collection.io/access-jwt';
+import { DatabaseService, UserStatus } from '@collection.io/prisma';
 
 import { EXPIRE_IN, TOKEN_COOKIE_KEY } from './const';
 import { RefreshJwtService } from './refresh-jwt.service';
@@ -70,8 +74,9 @@ export class RefreshService {
     }
 
     this.logger.log('Token sign is valid. Checking db info...');
-    const user = await this.db.user.findUnique({
+    const user: TUserInfo | null = await this.db.user.findUnique({
       where: { id: payload[JwtFields.Id] },
+      select: UserInfoSelectQuery,
     });
 
     if (!user) {
@@ -97,7 +102,7 @@ export class RefreshService {
     };
   }
 
-  async setRefreshToken(user: User, res: FastifyReply) {
+  async setRefreshToken(user: TUserInfo, res: FastifyReply) {
     const token = await this.jwt.createToken(user);
     await this.history.registerToken(user.id, token);
     this.setCookie(token, res);

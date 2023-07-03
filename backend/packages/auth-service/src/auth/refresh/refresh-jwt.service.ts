@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@collection.io/prisma';
-import { JwtFields, JwtPayload, isJwtPayload } from '@collection.io/access-jwt';
+import {
+  JwtFields,
+  JwtPayload,
+  isJwtPayload,
+  TUserInfo,
+} from '@collection.io/access-jwt';
 
 @Injectable()
 export class RefreshJwtService {
   constructor(private jwt: JwtService) {}
 
-  async createToken(user: User) {
+  async createToken(user: TUserInfo) {
     return await this.jwt.signAsync(this.userToPayload(user));
   }
 
@@ -21,7 +25,7 @@ export class RefreshJwtService {
     }
   }
 
-  private userToPayload(user: User): JwtPayload {
+  private userToPayload(user: TUserInfo): JwtPayload {
     return {
       [JwtFields.Id]: user.id,
     };

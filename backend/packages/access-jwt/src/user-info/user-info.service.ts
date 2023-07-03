@@ -6,6 +6,16 @@ export type TUserInfo = Exclude<
   null
 >;
 
+export const UserInfoSelectQuery = {
+  id: true,
+  email: true,
+  name: true,
+  role: true,
+  status: true,
+  createdAt: true,
+  lastLogin: true,
+} as const;
+
 @Injectable()
 export class UserInfoService {
   constructor(private db: DatabaseService) {}
@@ -13,15 +23,7 @@ export class UserInfoService {
   async getUser(id: number) {
     return await this.db.user.findUnique({
       where: { id },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        status: true,
-        createdAt: true,
-        lastLogin: true,
-      },
+      select: UserInfoSelectQuery,
     });
   }
 }
