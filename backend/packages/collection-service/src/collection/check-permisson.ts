@@ -12,6 +12,7 @@ type CollectionType = {
   name: string;
   themeName: string | null;
   ownerId: number;
+  description: string;
   fields: Field[];
 };
 
@@ -44,6 +45,7 @@ export async function checkCollectionPermissions(
       themeName: true,
       ownerId: true,
       fields: true,
+      description: true,
     },
   });
 

@@ -5,8 +5,8 @@ export enum OrderByField {
 }
 
 export enum OrderByType {
-  Ascending = 'asc',
-  Descending = 'desc',
+  Ascending = 'ASC',
+  Descending = 'DESC',
 }
 
 export interface SearchOptionsDto {
