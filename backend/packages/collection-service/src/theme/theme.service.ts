@@ -1,6 +1,6 @@
 import { CollectionTheme, DatabaseService } from '@collection.io/prisma';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateThemeDto, UpdateThemeDto, DeleteThemeDto } from './dto';
+import { Injectable } from '@nestjs/common';
+import { CreateThemeDto, UpdateThemeDto } from './dto';
 
 @Injectable()
 export class ThemeService {
@@ -8,18 +8,6 @@ export class ThemeService {
 
   async getAll(): Promise<CollectionTheme[]> {
     return await this.db.collectionTheme.findMany();
-  }
-
-  async get(id: number): Promise<CollectionTheme> {
-    const theme = await this.db.collectionTheme.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!theme) throw new NotFoundException('Theme not found!');
-
-    return theme;
   }
 
   async create(dto: CreateThemeDto): Promise<CollectionTheme> {
@@ -30,21 +18,19 @@ export class ThemeService {
     });
   }
 
-  async update(dto: UpdateThemeDto): Promise<CollectionTheme> {
+  async update(name: string, dto: UpdateThemeDto): Promise<CollectionTheme> {
     return await this.db.collectionTheme.update({
       where: {
-        id: dto.id,
+        name,
       },
-      data: {
-        name: dto.name,
-      },
+      data: dto,
     });
   }
 
-  async delete(dto: DeleteThemeDto): Promise<CollectionTheme> {
+  async delete(name: string): Promise<CollectionTheme> {
     return await this.db.collectionTheme.delete({
       where: {
-        id: dto.id,
+        name,
       },
     });
   }

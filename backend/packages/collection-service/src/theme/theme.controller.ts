@@ -2,7 +2,7 @@ import { Controller, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
 import { AuthGuard, Role } from '@collection.io/access-jwt';
 import { CollectionTheme, UserRole } from '@collection.io/prisma';
-import { CreateThemeDto, UpdateThemeDto, DeleteThemeDto } from './dto';
+import { CreateThemeDto, UpdateThemeDto } from './dto';
 import { ThemeService } from './theme.service';
 
 @Controller('theme')
@@ -14,15 +14,7 @@ export class ThemeController {
     return this.service.getAll();
   }
 
-  @TypedRoute.Get(':id')
-  getTheme(
-    @TypedParam('id')
-    id: number,
-  ): Promise<CollectionTheme> {
-    return this.service.get(id);
-  }
-
-  @TypedRoute.Post('create')
+  @TypedRoute.Post()
   @HttpCode(HttpStatus.CREATED)
   @Role(UserRole.ADMIN)
   @UseGuards(AuthGuard)
@@ -34,25 +26,33 @@ export class ThemeController {
     return 'Created successfully';
   }
 
-  @TypedRoute.Patch('update')
+  @TypedRoute.Patch(':name')
   @Role(UserRole.ADMIN)
   @UseGuards(AuthGuard)
   async update(
+    /**
+     * @maxLength 30
+     */
+    @TypedParam('name')
+    name: string,
     @TypedBody()
     dto: UpdateThemeDto,
   ) {
-    await this.service.update(dto);
+    await this.service.update(name, dto);
     return 'Updated successfully';
   }
 
-  @TypedRoute.Delete('delete')
+  @TypedRoute.Delete(':name')
   @Role(UserRole.ADMIN)
   @UseGuards(AuthGuard)
   async delete(
-    @TypedBody()
-    dto: DeleteThemeDto,
+    /**
+     * @maxLength 30
+     */
+    @TypedParam('name')
+    name: string,
   ) {
-    await this.service.delete(dto);
+    await this.service.delete(name);
     return 'Deleted successfully';
   }
 }
