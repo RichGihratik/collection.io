@@ -12,7 +12,7 @@ import {
 import { TUserInfo } from '@collection.io/access-jwt';
 import { sanitize } from 'isomorphic-dompurify';
 
-import { prepareSearch } from '@/common';
+import { SearchLang, prepareSearch } from '@/common';
 import { sanitizeFields } from './sanitize-fields';
 import { checkCollectionPermissions } from './check-permisson';
 import {
@@ -31,18 +31,18 @@ export class CollectionService {
 
   async search(options: SearchOptionsDto): Promise<CollectionDto[]> {
     let wherePart = options.userId
-      ? Prisma.sql`ownerId = ${options.userId}`
+      ? Prisma.sql`u."id" = ${options.userId}`
       : undefined;
 
     let orderPart = Prisma.raw(
-      `${options.orderBy ?? OrderByField.ItemCount} ${
+      `"${options.orderBy ?? OrderByField.ItemCount}" ${
         options.orderType ?? OrderByType.Descending
       }`,
     );
 
-    if (options.searchBy) {
-      const rusSearch = prepareSearch(options.searchBy, 'russian');
-      const engSearch = prepareSearch(options.searchBy, 'english');
+    if (options.searchBy && options.searchBy !== '') {
+      const rusSearch = prepareSearch(options.searchBy, SearchLang.Rus);
+      const engSearch = prepareSearch(options.searchBy, SearchLang.Eng);
 
       wherePart = Prisma.sql`
         ${wherePart ? Prisma.sql`(${wherePart}) AND` : Prisma.empty} 
@@ -51,35 +51,38 @@ export class CollectionService {
       `;
 
       orderPart = Prisma.sql`
-        MAX(ts_rank("ts_rus", ${rusSearch}), ts_rank(ts_rank("ts_eng", ${engSearch}))) DESC,
+        GREATEST(ts_rank(c."ts_rus", ${rusSearch}), ts_rank(c."ts_eng", ${engSearch})) DESC,
         ${orderPart}
       `;
     }
 
     const collections = await this.db.$queryRaw<CollectionDto[]>`
       SELECT 
-        c.id,
-        c.name,
-        COALESCE(c.themeName, 'Other') AS "theme",
-        u.id AS "ownerId",
-        u.name AS "ownerName",
-        COUNT(r.id) AS "votesCount",
-        COUNT(i.id) AS "itemsCount",
-        AVG(r.rating) AS "rating",
+        c."id",
+        c."name",
+        COALESCE(c."themeName", 'Other') AS "theme",
+        json_build_object(
+          'id', u."id",
+          'name', u."name"
+        ) AS "owner",
+        COUNT(r.rating)::INTEGER AS "votesCount",
+        COUNT(i.id)::INTEGER AS "itemsCount",
+        COALESCE(AVG(r.rating), 0)::REAL AS "rating"
       FROM "Collection" AS c
-        JOIN "Item" AS i
-        ON c.id = i.collectionId
-        JOIN "CollectionRating" AS r
-        ON c.id = r.collectionId
+        LEFT JOIN "Item" AS i
+        ON c.id = i."collectionId"
+        LEFT JOIN "CollectionRating" AS r
+        ON c.id = r."collectionId"
         JOIN "User" AS u
-        ON c.ownerId = u.id
-      ${wherePart ? Prisma.sql`WHERE ${wherePart}` : Prisma.empty}
+        ON c."ownerId" = u.id ${
+          wherePart ? Prisma.sql`\nWHERE ${wherePart}` : Prisma.empty
+        }
+      GROUP BY c.id, u.id
       ORDER BY
-        ${orderPart}
-      ${options.limit ? Prisma.sql`LIMIT ${options.limit}` : Prisma.empty}
-      ${options.offset ? Prisma.sql`OFFSET ${options.offset}` : Prisma.empty}
-      GROUP BY c.id;
-    `;
+        ${orderPart}${
+      options.limit ? Prisma.sql`\nLIMIT ${options.limit}` : Prisma.empty
+    }${options.offset ? Prisma.sql`\nOFFSET ${options.offset}` : Prisma.empty}`;
+
     return collections;
   }
 

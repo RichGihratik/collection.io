@@ -38,9 +38,13 @@ export type DatabaseClient = Parameters<
   Parameters<DatabaseService['$transaction']>[0]
 >[0];
 
-export function prepareSearch(searchStr: string, lang: string) {
-  return Prisma.sql`to_tsquery(${lang}, ${Prisma.join(
-    searchStr.split(' ').map((str) => Prisma.sql`${str}:?`),
-    ' | ',
-  )})`;
+export enum SearchLang {
+  Eng = 'english',
+  Rus = 'russian',
+}
+
+export function prepareSearch(searchStr: string, lang: SearchLang) {
+  return Prisma.sql`websearch_to_tsquery(${Prisma.raw(`'${lang}'`)}, ${
+    searchStr + ':?'
+  })`;
 }

@@ -1,7 +1,7 @@
 export enum OrderByField {
   Name = 'name',
   Rating = 'rating',
-  ItemCount = 'itemCount',
+  ItemCount = 'itemsCount',
 }
 
 export enum OrderByType {
