@@ -49,13 +49,15 @@ enum FieldType {
 }
 
 model Collection {
-  id          Int                @id @default(autoincrement())
+  id          Int                     @id @default(autoincrement())
   name        String
   description String
-  theme       CollectionTheme?   @relation(fields: [themeName], references: [name], onDelete: SetNull)
+  theme       CollectionTheme?        @relation(fields: [themeName], references: [name], onDelete: SetNull)
   themeName   String?
-  owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner       User                    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     Int
+  ts_eng      Unsupported("tsvector")
+  ts_rus      Unsupported("tsvector")
   fields      FieldConfig[]
   items       Item[]
   ratings     CollectionRating[]
@@ -72,10 +74,12 @@ model FieldConfig {
 }
 
 model Item {
-  id           Int           @id @default(autoincrement())
+  id           Int                     @id @default(autoincrement())
   name         String
-  collection   Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection   Collection              @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
+  ts_eng       Unsupported("tsvector")
+  ts_rus       Unsupported("tsvector")
   fields       ItemValue[]
   comments     ItemComment[]
   likes        ItemLike[]
@@ -94,10 +98,12 @@ model ItemTag {
 
 model ItemValue {
   value        String
-  config       FieldConfig @relation(fields: [fieldName, collectionId], references: [name, collectionId], onDelete: Cascade)
+  config       FieldConfig             @relation(fields: [fieldName, collectionId], references: [name, collectionId], onDelete: Cascade)
   fieldName    String
   collectionId Int
-  item         Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  ts_eng       Unsupported("tsvector")
+  ts_rus       Unsupported("tsvector")
+  item         Item                    @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId       Int
 
   @@id([itemId, fieldName, collectionId])
@@ -140,13 +146,15 @@ model ItemLike {
 // ======================================
 
 model ItemComment {
-  id        Int               @id @default(autoincrement())
-  item      Item              @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id        Int                     @id @default(autoincrement())
+  item      Item                    @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    Int
-  author    User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User                    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  ts_eng    Unsupported("tsvector")
+  ts_rus    Unsupported("tsvector")
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
   likes     ItemCommentLike[]
   content   String
 }

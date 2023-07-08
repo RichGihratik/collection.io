@@ -4,7 +4,7 @@ ALTER TABLE "Collection" ADD COLUMN "ts_eng" tsvector
     GENERATED ALWAYS AS (
       to_tsvector(
         'english', 
-        "name" || ' ' || "description" || ' ' || "themeName"
+        "name" || ' ' || "description" || ' ' || COALESCE("themeName", 'Other')
         )
       ) STORED;
 
@@ -12,7 +12,7 @@ ALTER TABLE "Collection" ADD COLUMN "ts_rus" tsvector
     GENERATED ALWAYS AS (
       to_tsvector(
         'russian', 
-        "name" || ' ' || "description" || ' ' || "themeName"
+        "name" || ' ' || "description" || ' ' || COALESCE("themeName", 'Other')
         )
       ) STORED;
 
