@@ -44,7 +44,6 @@ export enum SearchLang {
 }
 
 export function prepareSearch(searchStr: string, lang: SearchLang) {
-  return Prisma.sql`websearch_to_tsquery(${Prisma.raw(`'${lang}'`)}, ${
-    searchStr + ':?'
-  })`;
+  const convertedStr = searchStr.trim().split(/s+/).join(' & ') + ':*';
+  return Prisma.sql`to_tsquery(${Prisma.raw(`'${lang}'`)}, ${convertedStr})`;
 }
