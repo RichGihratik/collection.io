@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { terminal as term } from 'terminal-kit';
 import { TestService } from './test.service';
-import { Options, UI, Service } from './generator.interface';
+import { Options, UI, Service } from './service.interface';
 import { stdout } from 'node:process';
 import { clearScreenDown, cursorTo } from 'node:readline';
+import { ThemeService } from './theme.service';
 
 @Injectable()
 export class AppService implements UI {
-  constructor(private test: TestService) {}
+  constructor(private test: TestService, private theme: ThemeService) {}
 
   private serviceList: Record<string, Service> = {
     Test: this.test,
+    Theme: this.theme,
   };
 
   private isExit = false;
@@ -37,6 +39,10 @@ export class AppService implements UI {
         else throw e;
       }
     }
+  }
+
+  print(str: string) {
+    term.bold.cyan(`${str}\n`);
   }
 
   async askString(title: string): Promise<string> {

@@ -9,6 +9,7 @@ export type Options<T extends string> = {
 
 export interface UI {
   askString(title: string): Promise<string>;
+  print(str: string): void;
   askOptions<T extends string>(options: Options<T>): Promise<T>;
   clearDisplay(): void;
 }
