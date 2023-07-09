@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TestService } from './test.service';
+import { AppService } from './app.service';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
-  const test = app.get(TestService);
+  const ui = app.get(AppService);
 
-  console.log(await test.test());
+  await ui.start();
   await app.close();
 }
 bootstrap();
