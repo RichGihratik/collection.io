@@ -200,28 +200,28 @@ importers:
         specifier: workspace:^
         version: link:../prisma
       '@fastify/helmet':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^11.0.0
+        version: 11.0.0
       '@nestia/core':
-        specifier: ^1.3.8
+        specifier: ^1.4.3
         version: 1.4.3(@nestia/fetcher@1.4.0)(@nestjs/common@10.0.5)(@nestjs/core@10.0.5)(@nestjs/platform-express@10.0.5)(@nestjs/platform-fastify@10.0.5)(raw-body@2.5.2)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.1.6)(typia@4.1.4)
       '@nestjs/common':
-        specifier: ^10.0.1
+        specifier: ^10.0.5
         version: 10.0.5(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nestjs/config':
         specifier: ^3.0.0
         version: 3.0.0(@nestjs/common@10.0.5)(reflect-metadata@0.1.13)
       '@nestjs/core':
-        specifier: ^10.0.1
+        specifier: ^10.0.5
         version: 10.0.5(@nestjs/common@10.0.5)(@nestjs/platform-express@10.0.5)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nestjs/platform-fastify':
-        specifier: ^10.0.1
+        specifier: ^10.0.5
         version: 10.0.5(@nestjs/common@10.0.5)(@nestjs/core@10.0.5)
       fastify:
-        specifier: ^4.18.0
+        specifier: ^4.19.2
         version: 4.19.2
       isomorphic-dompurify:
-        specifier: ^1.6.0
+        specifier: ^1.7.0
         version: 1.7.0
       reflect-metadata:
         specifier: ^0.1.13
@@ -231,55 +231,55 @@ importers:
         version: 7.8.1
     devDependencies:
       '@nestia/sdk':
-        specifier: ^1.3.16
+        specifier: ^1.4.9
         version: 1.4.9(@nestia/fetcher@1.4.0)(@nestjs/common@10.0.5)(@nestjs/core@10.0.5)(reflect-metadata@0.1.13)(ts-node@10.9.1)(typescript@5.1.6)(typia@4.1.4)
       '@nestjs/cli':
-        specifier: ^10.0.2
+        specifier: ^10.1.7
         version: 10.1.7
       '@nestjs/schematics':
         specifier: ^10.0.1
         version: 10.0.1(chokidar@3.5.3)(typescript@5.1.6)
       '@types/node':
-        specifier: 20.3.1
-        version: 20.3.1
+        specifier: 20.4.1
+        version: 20.4.1
       '@typescript-eslint/eslint-plugin':
-        specifier: ^5.59.11
+        specifier: ^5.61.0
         version: 5.61.0(@typescript-eslint/parser@5.61.0)(eslint@8.44.0)(typescript@5.1.6)
       '@typescript-eslint/parser':
-        specifier: ^5.59.11
+        specifier: ^5.61.0
         version: 5.61.0(eslint@8.44.0)(typescript@5.1.6)
       eslint:
-        specifier: ^8.43.0
+        specifier: ^8.44.0
         version: 8.44.0
       eslint-config-prettier:
         specifier: ^8.8.0
         version: 8.8.0(eslint@8.44.0)
       eslint-plugin-prettier:
         specifier: ^4.2.1
-        version: 4.2.1(eslint-config-prettier@8.8.0)(eslint@8.44.0)(prettier@2.8.8)
+        version: 4.2.1(eslint-config-prettier@8.8.0)(eslint@8.44.0)(prettier@3.0.0)
       nestia:
         specifier: ^4.3.2
         version: 4.3.2
       prettier:
-        specifier: ^2.8.8
-        version: 2.8.8
+        specifier: ^3.0.0
+        version: 3.0.0
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
       ts-loader:
-        specifier: ^9.4.3
+        specifier: ^9.4.4
         version: 9.4.4(typescript@5.1.6)(webpack@5.88.1)
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.3.1)(typescript@5.1.6)
+        version: 10.9.1(@types/node@20.4.1)(typescript@5.1.6)
       ts-patch:
-        specifier: ^3.0.0
+        specifier: ^3.0.1
         version: 3.0.1
       tsconfig-paths:
         specifier: 4.2.0
         version: 4.2.0
       typescript:
-        specifier: ^5.1.3
+        specifier: ^5.1.6
         version: 5.1.6
 
   packages/prisma:
@@ -618,13 +618,6 @@ packages:
     dependencies:
       fast-querystring: 1.1.2
       fastify-plugin: 4.5.0
-
-  /@fastify/helmet@10.1.1:
-    resolution: {integrity: sha512-z9abyIlCHPU25llOTyo3uz8F8TJ+uDqtOC4+38dxODPw8Ro9sTZjbm2U7ZIF0IAv3/E0ke6vbUQ4sB376WuKJA==}
-    dependencies:
-      fastify-plugin: 4.5.0
-      helmet: 6.2.0
-    dev: false
 
   /@fastify/helmet@11.0.0:
     resolution: {integrity: sha512-YSFhJFR4Pk2azmTkX54f0Z/O7h5j4ruCQUlagf/Rw1P45u5/2u+F+I83DRyIKryM6prXl++X2yY0Ib0RXAlZ7Q==}
@@ -1105,13 +1098,13 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 20.4.1
+      '@types/node': 20.3.1
     dev: true
 
   /@types/connect@3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.3.1
     dev: true
 
   /@types/dompurify@3.0.2:
@@ -1138,7 +1131,7 @@ packages:
   /@types/express-serve-static-core@4.17.35:
     resolution: {integrity: sha512-wALWQwrgiB2AWTT91CB62b6Yt0sNHpznUXeZEcnPU3DRdlDIz74x8Qg1UUYKSVFi+va5vKOLYRBI1bRKiLLKIg==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.3.1
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
       '@types/send': 0.17.1
@@ -1163,7 +1156,7 @@ packages:
   /@types/jsonwebtoken@9.0.2:
     resolution: {integrity: sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.3.1
     dev: false
 
   /@types/mime@1.3.2:
@@ -1180,7 +1173,6 @@ packages:
 
   /@types/node@20.3.1:
     resolution: {integrity: sha512-EhcH/wvidPy1WeML3TtYFGR83UzjxeWRen9V402T8aUGYsCHOmfoisV3ZSg03gAFIbLq8TnWOJ0f4cALtnSEUg==}
-    dev: true
 
   /@types/node@20.4.1:
     resolution: {integrity: sha512-JIzsAvJeA/5iY6Y/OxZbv1lUcc8dNSE77lb2gnBH+/PJ3lFR1Ccvgwl5JWnHAkNHcRsT0TbpVOsiMKZ1F/yyJg==}
@@ -1205,7 +1197,7 @@ packages:
     resolution: {integrity: sha512-Cwo8LE/0rnvX7kIIa3QHCkcuF21c05Ayb0ZfxPiv0W8VRiZiNW/WuRupHKpqqGVGf7SUA44QSOUKaEd9lIrd/Q==}
     dependencies:
       '@types/mime': 1.3.2
-      '@types/node': 20.4.1
+      '@types/node': 20.3.1
     dev: true
 
   /@types/serve-static@1.15.2:
@@ -1213,7 +1205,7 @@ packages:
     dependencies:
       '@types/http-errors': 2.0.1
       '@types/mime': 3.0.1
-      '@types/node': 20.4.1
+      '@types/node': 20.3.1
     dev: true
 
   /@types/trusted-types@2.0.3:
@@ -2778,11 +2770,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
-
-  /helmet@6.2.0:
-    resolution: {integrity: sha512-DWlwuXLLqbrIOltR6tFQXShj/+7Cyp0gLi6uAb8qMdFh/YBBFbKSgQ6nbXmScYd8emMctuthmgIa7tUfo9Rtyg==}
-    engines: {node: '>=14.0.0'}
-    dev: false
 
   /helmet@7.0.0:
     resolution: {integrity: sha512-MsIgYmdBh460ZZ8cJC81q4XJknjG567wzEmv46WOBblDb6TUd3z8/GhgmsM9pn8g2B80tAJ4m5/d3Bi1KrSUBQ==}
