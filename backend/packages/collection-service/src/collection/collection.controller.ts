@@ -22,11 +22,13 @@ import {
 } from './dto';
 import { CollectionService } from './collection.service';
 import { FieldConfigService } from './field-config.service';
+import { CollectionSearchService } from './collection-search.service';
 
 @Controller('collection')
 export class CollectionController {
   constructor(
     private collection: CollectionService,
+    private search: CollectionSearchService,
     private fieldConfig: FieldConfigService,
   ) {}
 
@@ -35,7 +37,7 @@ export class CollectionController {
     @TypedQuery()
     props: SearchOptionsDto,
   ): Promise<CollectionDto[]> {
-    return this.collection.search(props);
+    return this.search.search(props);
   }
 
   @TypedRoute.Get(':id')
@@ -46,7 +48,7 @@ export class CollectionController {
     @UserInfo()
     info?: TUserInfo,
   ): Promise<CollectionFullInfoDto> {
-    return this.collection.get(id, info);
+    return this.search.get(id, info);
   }
 
   @TypedRoute.Post()
