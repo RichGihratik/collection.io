@@ -1,18 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { terminal as term } from 'terminal-kit';
-import { TestService } from './test.service';
-import { Options, UI, Service } from './service.interface';
 import { stdout } from 'node:process';
 import { clearScreenDown, cursorTo } from 'node:readline';
+import { Injectable } from '@nestjs/common';
+import { terminal as term } from 'terminal-kit';
+import { Options, UI, Service, MsgType } from './service.interface';
 import { ThemeService } from './theme.service';
+import { UserService } from './user.service';
+
+function isInt(input: string) {
+  return (
+    typeof +input === 'number' && !isNaN(+input) && (+input | 0) === +input
+  );
+}
 
 @Injectable()
 export class AppService implements UI {
-  constructor(private test: TestService, private theme: ThemeService) {}
+  constructor(private theme: ThemeService, private user: UserService) {}
 
   private serviceList: Record<string, Service> = {
-    Test: this.test,
     Theme: this.theme,
+    User: this.user,
   };
 
   private isExit = false;
@@ -25,15 +31,17 @@ export class AppService implements UI {
       return acc;
     }, {});
 
+    let spaces = 0;
+
     while (!this.isExit) {
       try {
-        this.clearDisplay();
+        this.clearDisplay(spaces);
         const key = await this.askOptions({
           title: 'Select service to generate',
           map: options,
         });
 
-        await this.serviceList[key].execute(this);
+        spaces = await this.serviceList[key].execute(this);
       } catch (e) {
         if (e === 'exit') return;
         else throw e;
@@ -41,18 +49,42 @@ export class AppService implements UI {
     }
   }
 
-  print(str: string) {
-    term.bold.cyan(`${str}\n`);
+  print(str: string, type = MsgType.Info) {
+    switch (type) {
+      case MsgType.Info:
+        term.bold.cyan(`${str}\n`);
+        break;
+      case MsgType.Success:
+        term.bold.brightGreen(`${str}\n`);
+        break;
+      case MsgType.Error:
+        term.bold.brightRed(`${str}\n`);
+        break;
+    }
   }
 
   async askString(title: string): Promise<string> {
     term.bold.cyan(`\n${title} `);
-    const input = await term.inputField({}).promise;
-    if (!input) throw new TypeError('Input was undefined');
+    let input: string | undefined;
+    while (!input) {
+      input = await term.inputField({}).promise;
+    }
+    if (input === 'exit') throw 'exit';
+    term('\n');
     return input;
   }
 
-  async askOptions<T extends string>(options: Options<T>): Promise<T> {
+  async askInt(title: string, positiveOnly = true): Promise<number> {
+    let result: number | undefined = undefined;
+    while (!result) {
+      const input = await this.askString(title);
+      if (isInt(input) && (!positiveOnly || +input >= 0)) result = +input;
+    }
+
+    return result;
+  }
+
+  async askOptions<T>(options: Options<T>): Promise<T> {
     term.bold.cyan(`\n${options.title} \n`);
 
     const values: T[] = [];
@@ -75,11 +107,15 @@ export class AppService implements UI {
     } else return values[result.selectedIndex];
   }
 
-  clearDisplay() {
-    const repeatCount = stdout.rows - 2;
+  drawSeparator(length = 64 + 6) {
+    term('\n' + '='.repeat(length) + '\n');
+  }
+
+  clearDisplay(upperLinesCount = 0) {
+    const repeatCount = stdout.rows - 2 - upperLinesCount;
     const blank = repeatCount > 0 ? '\n'.repeat(repeatCount) : '';
     console.log(blank);
-    cursorTo(stdout, 0, 0);
+    cursorTo(stdout, 0, upperLinesCount);
     clearScreenDown(stdout);
   }
 }

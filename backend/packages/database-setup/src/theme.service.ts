@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Service, UI } from './service.interface';
 import { DatabaseService } from '@collection.io/prisma';
+import { MsgType, Service, UI } from './service.interface';
 
 const themeList = [
   'Alcohol',
@@ -60,14 +60,15 @@ const themeList = [
 export class ThemeService implements Service {
   constructor(private db: DatabaseService) {}
 
-  async execute(ui: UI): Promise<void> {
+  async execute(ui: UI): Promise<number> {
     return await this.db.$transaction(async (dbx) => {
       await dbx.collectionTheme.deleteMany();
       ui.print('All themes was deleted');
       await dbx.collectionTheme.createMany({
         data: themeList.map((theme) => ({ name: theme })),
       });
-      ui.print('Themes was successfully recreated');
+      ui.print('Themes was successfully recreated', MsgType.Success);
+      return 1;
     });
   }
 }
