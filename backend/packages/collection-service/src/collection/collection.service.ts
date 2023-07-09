@@ -12,7 +12,7 @@ import {
 import { TUserInfo } from '@collection.io/access-jwt';
 import { sanitize } from 'isomorphic-dompurify';
 
-import { SearchLang, prepareSearch } from '@/common';
+import { SearchLang, prepareSearch, OrderByType } from '@/search';
 import { sanitizeFields } from './sanitize-fields';
 import { checkCollectionPermissions } from './check-permisson';
 import {
@@ -21,7 +21,6 @@ import {
   UpdateCollectionDto,
   CollectionFullInfoDto,
   CollectionDto,
-  OrderByType,
   OrderByField,
 } from './dto';
 

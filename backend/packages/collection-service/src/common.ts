@@ -1,4 +1,4 @@
-import { DatabaseService, FieldType, Prisma } from '@collection.io/prisma';
+import { DatabaseService, FieldType } from '@collection.io/prisma';
 import { isDate } from 'util/types';
 
 export interface ObjectWithId {
@@ -37,13 +37,3 @@ export function isValidField(item: unknown, type: FieldType): boolean {
 export type DatabaseClient = Parameters<
   Parameters<DatabaseService['$transaction']>[0]
 >[0];
-
-export enum SearchLang {
-  Eng = 'english',
-  Rus = 'russian',
-}
-
-export function prepareSearch(searchStr: string, lang: SearchLang) {
-  const convertedStr = searchStr.trim().split(/s+/).join(' & ') + ':*';
-  return Prisma.sql`to_tsquery(${Prisma.raw(`'${lang}'`)}, ${convertedStr})`;
-}

@@ -1,7 +1,6 @@
 export {
   SearchOptionsDto,
   OrderByField,
-  OrderByType,
 } from './search-options.dto';
 
 export { CreateCollectionDto } from './create-collection.dto';
