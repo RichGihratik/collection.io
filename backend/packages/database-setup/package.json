@@ -1,7 +1,7 @@
 {
   "name": "@collection.io/database-setup",
   "version": "1.0.0",
-  "description": "Script to generate initial random data for collection.io",
+  "description": "App to generate initial random data for collection.io",
   "packageManager": "^pnpm@8.5.1",
   "author": "RichGihratik (Cyrus)",
   "private": true,
@@ -19,15 +19,17 @@
     "@collection.io/prisma": "workspace:^",
     "@faker-js/faker": "^8.0.2",
     "@nestjs/common": "^10.0.5",
-    "terminal-kit": "^3.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.5",
+    "bcrypt": "^5.1.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "terminal-kit": "^3.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.1.7",
     "@nestjs/schematics": "^10.0.1",
+    "@types/bcrypt": "^5.0.0",
     "@types/node": "20.4.1",
     "@types/terminal-kit": "^2.5.1",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
