@@ -11,7 +11,12 @@ export class FieldConfigService {
 
   async update(id: number, dto: UpdateFieldsDto, info: TUserInfo) {
     return this.db.$transaction(async (dbx) => {
-      const collection = await checkCollectionPermissions(dbx, info, id, info.id);
+      const collection = await checkCollectionPermissions(
+        dbx,
+        info,
+        id,
+        info.id,
+      );
 
       if (!collection) throw new NotFoundException('Collection was not found!');
 
@@ -28,10 +33,6 @@ export class FieldConfigService {
         data: sanitizedDto.create,
       });
 
-      await dbx.fieldConfig.updateMany({
-        data: sanitizedDto.update,
-      });
-
       await dbx.fieldConfig.deleteMany({
         where: {
           collectionId: id,
@@ -40,6 +41,20 @@ export class FieldConfigService {
           },
         },
       });
+      
+      // We cant use batch query here because we change every value to individual values 
+      for (const field of sanitizedDto.update)
+        await dbx.fieldConfig.update({
+          where: {
+            name_collectionId: {
+              collectionId: id,
+              name: field.name,
+            },
+          },
+          data: {
+            type: field.type,
+          },
+        });
     });
   }
 }

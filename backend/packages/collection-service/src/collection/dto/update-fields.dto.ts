@@ -1,9 +1,7 @@
-import { ObjectWithId, Field, ObjectWithName } from '@/common';
-
-interface FieldsWithId extends Field, ObjectWithId {}
+import { Field, ObjectWithName } from '@/common';
 
 export interface UpdateFieldsDto {
   create: Field[];
-  update: FieldsWithId[];
+  update: Field[];
   delete: ObjectWithName[];
 }
