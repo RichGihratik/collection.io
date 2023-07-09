@@ -56,8 +56,8 @@ model Collection {
   themeName   String?
   owner       User                    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     Int
-  ts_eng      Unsupported("tsvector")
-  ts_rus      Unsupported("tsvector")
+  ts_eng      Unsupported("tsvector") @default(dbgenerated("to_tsvector('english'::regconfig, ((((name || ' '::text) || description) || ' '::text) || COALESCE(\"themeName\", 'Other'::text)))"))
+  ts_rus      Unsupported("tsvector") @default(dbgenerated("to_tsvector('russian'::regconfig, ((((name || ' '::text) || description) || ' '::text) || COALESCE(\"themeName\", 'Other'::text)))"))
   fields      FieldConfig[]
   items       Item[]
   ratings     CollectionRating[]
@@ -78,8 +78,8 @@ model Item {
   name         String
   collection   Collection              @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
-  ts_eng       Unsupported("tsvector")
-  ts_rus       Unsupported("tsvector")
+  ts_eng       Unsupported("tsvector") @default(dbgenerated("to_tsvector('english'::regconfig, name)"))
+  ts_rus       Unsupported("tsvector") @default(dbgenerated("to_tsvector('russian'::regconfig, name)"))
   fields       ItemValue[]
   comments     ItemComment[]
   likes        ItemLike[]
@@ -101,8 +101,8 @@ model ItemValue {
   config       FieldConfig             @relation(fields: [fieldName, collectionId], references: [name, collectionId], onDelete: Cascade)
   fieldName    String
   collectionId Int
-  ts_eng       Unsupported("tsvector")
-  ts_rus       Unsupported("tsvector")
+  ts_eng       Unsupported("tsvector") @default(dbgenerated("to_tsvector('english'::regconfig, value)"))
+  ts_rus       Unsupported("tsvector") @default(dbgenerated("to_tsvector('russian'::regconfig, value)"))
   item         Item                    @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId       Int
 
@@ -151,8 +151,8 @@ model ItemComment {
   itemId    Int
   author    User                    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
-  ts_eng    Unsupported("tsvector")
-  ts_rus    Unsupported("tsvector")
+  ts_eng    Unsupported("tsvector") @default(dbgenerated("to_tsvector('english'::regconfig, content)"))
+  ts_rus    Unsupported("tsvector") @default(dbgenerated("to_tsvector('russian'::regconfig, content)"))
   createdAt DateTime                @default(now())
   updatedAt DateTime                @updatedAt
   likes     ItemCommentLike[]
