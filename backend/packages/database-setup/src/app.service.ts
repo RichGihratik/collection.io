@@ -24,24 +24,16 @@ export class AppService implements UI {
   private isExit = false;
 
   async start() {
-    const options: Record<string, string> = Object.keys(
-      this.serviceList,
-    ).reduce((acc, key) => {
-      acc[key] = key;
-      return acc;
-    }, {});
-
     let spaces = 0;
-
     while (!this.isExit) {
       try {
         this.clearDisplay(spaces);
-        const key = await this.askOptions({
+        const service = await this.askOptions({
           title: 'Select service to generate',
-          map: options,
+          map: this.serviceList,
         });
 
-        spaces = await this.serviceList[key].execute(this);
+        spaces = await service.execute(this);
       } catch (e) {
         if (e === 'exit') return;
         else throw e;
