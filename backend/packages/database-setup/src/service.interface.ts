@@ -20,8 +20,9 @@ export interface UI {
   askInt(title: string): Promise<number>;
   print(str: string, type?: MsgType): void;
   askOptions<T>(options: Options<T>): Promise<T>;
-  askReset(): Promise<boolean>;
-  askLocale(): Promise<() => Faker>;
+  askBool(title: string): Promise<boolean>;
+  setProgress(title: string, itemCount: number): (updateProgress: number) => void;
+  askFaker(): Promise<() => Faker>;
   clearDisplay(upperLinesCount?: number): void;
   drawSeparator(length?: number): void;
 }

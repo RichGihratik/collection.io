@@ -51,6 +51,29 @@ export class AppService implements UI {
     }
   }
 
+  setProgress(
+    title: string,
+    itemCount: number,
+  ): (updateProgress: number) => void {
+    const progress = term.progressBar({
+      title: `${title} (${0}/${itemCount})`,
+      titleStyle: term.cyan.bold,
+      titleSize: 100,
+      percent: true,
+    });
+
+    return (updateProgress: number) => {
+      progress.update({
+        title: `${title} (${updateProgress}/${itemCount})`,
+        progress: updateProgress / itemCount,
+      });
+      if (updateProgress === itemCount) {
+        progress.stop();
+        term.eraseLine();
+      }
+    };
+  }
+
   print(str: string, type = MsgType.Info) {
     switch (type) {
       case MsgType.Info:
@@ -106,9 +129,9 @@ export class AppService implements UI {
     else return values[result.selectedIndex];
   }
 
-  async askReset() {
+  async askBool(title: string) {
     return await this.askOptions({
-      title: 'Reset all?',
+      title,
       map: {
         Yes: true,
         No: false,
@@ -116,7 +139,7 @@ export class AppService implements UI {
     });
   }
 
-  async askLocale() {
+  async askFaker() {
     return await this.askOptions({
       title: 'What locale?',
       map: {

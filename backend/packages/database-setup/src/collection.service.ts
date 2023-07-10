@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService, FieldType } from '@collection.io/prisma';
-import { Service, UI } from './service.interface';
+import { MsgType, Service, UI } from './service.interface';
 import { DirectoryService } from './directory.service';
 import { Faker } from '@faker-js/faker';
 
@@ -33,9 +33,9 @@ export class CollectionService implements Service {
 
   async execute(ui: UI): Promise<number> {
     ui.clearDisplay();
-    const isReset = await ui.askReset();
+    const isReset = await ui.askBool('Reset all?');
     ui.clearDisplay();
-    const locale = await ui.askLocale();
+    const locale = await ui.askFaker();
     ui.clearDisplay();
     const count = await ui.askInt('How much?');
 
@@ -66,8 +66,10 @@ export class CollectionService implements Service {
     ui.clearDisplay();
     if (isReset) {
       await this.db.collection.deleteMany();
-      ui.print('Collections has been reset');
+      ui.print('Collections has been reset', MsgType.Success);
     }
+    const progressUpdate = ui.setProgress('Creating collections...', count);
+    let progress = 0;
 
     for (const item of data) {
       await this.db.collection.create({
@@ -84,15 +86,16 @@ export class CollectionService implements Service {
           }
         },
       });
+      progressUpdate(++progress);
     }
 
-    ui.print('Collections has been created');
+    ui.print('Collections has been created', MsgType.Success);
     await this.dir.updateFile(
       FILENAME,
       this.dir.formatJson({
         collections: data,
       }),
     );
-    return isReset ? 2 : 1;
+    return 2;
   }
 }

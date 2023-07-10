@@ -26,9 +26,9 @@ export class UserService implements Service {
   async execute(ui: UI): Promise<number> {
     ui.clearDisplay();
 
-    const isReset = await ui.askReset();
+    const isReset = await ui.askBool('Reset all?');
 
-    const locale = await ui.askLocale();
+    const locale = await ui.askFaker();
 
     const userCount: number = await ui.askInt('Enter number of users:');
     const adminCount: number = await ui.askInt('Enter number of admins:');
@@ -85,7 +85,7 @@ export class UserService implements Service {
       }),
     );
 
-    ui.print('Data has been generated', MsgType.Success);
-    return isReset ? 2 : 1;
+    ui.print('Data has been generated\n', MsgType.Success);
+    return isReset ? 3 : 2;
   }
 }
