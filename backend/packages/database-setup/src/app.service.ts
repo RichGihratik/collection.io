@@ -14,7 +14,10 @@ function isInt(input: string) {
 
 @Injectable()
 export class AppService implements UI {
-  constructor(private theme: ThemeService, private user: UserService) {}
+  constructor(
+    private theme: ThemeService,
+    private user: UserService,
+  ) {}
 
   private serviceList: Record<string, Service> = {
     Theme: this.theme,
@@ -35,8 +38,11 @@ export class AppService implements UI {
 
         spaces = await service.execute(this);
       } catch (e) {
-        if (e === 'exit') return;
-        else throw e;
+        if (e === 'exit') {
+          term.bold.cyan('\nBye!\n');
+          term.processExit(0);
+          return;
+        } else throw e;
       }
     }
   }
@@ -56,7 +62,7 @@ export class AppService implements UI {
   }
 
   async askString(title: string): Promise<string> {
-    term.bold.cyan(`\n${title} `);
+    term.bold.cyan(`${title} `);
     let input: string | undefined;
     while (!input) {
       input = await term.inputField({}).promise;
@@ -77,7 +83,7 @@ export class AppService implements UI {
   }
 
   async askOptions<T>(options: Options<T>): Promise<T> {
-    term.bold.cyan(`\n${options.title} \n`);
+    term.bold.cyan(`${options.title} \n`);
 
     const values: T[] = [];
     const display: string[] = [];
@@ -92,11 +98,8 @@ export class AppService implements UI {
 
     const result = await term.singleColumnMenu(display).promise;
     term('\n');
-    if (result.selectedIndex === exitIndex) {
-      term.bold.cyan('Bye!\n');
-      term.processExit(0);
-      throw 'exit';
-    } else return values[result.selectedIndex];
+    if (result.selectedIndex === exitIndex) throw 'exit';
+    else return values[result.selectedIndex];
   }
 
   drawSeparator(length = 64 + 6) {
