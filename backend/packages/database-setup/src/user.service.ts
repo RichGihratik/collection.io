@@ -26,22 +26,9 @@ export class UserService implements Service {
   async execute(ui: UI): Promise<number> {
     ui.clearDisplay();
 
-    const isReset = await ui.askOptions({
-      title: 'Reset all users?',
-      map: {
-        Yes: true,
-        No: false,
-      },
-    });
+    const isReset = await ui.askReset();
 
-    const locale: () => Faker = await ui.askOptions({
-      title: 'What locale?',
-      map: {
-        Rus: () => fakerRU,
-        Eng: () => fakerEN,
-        Random: () => fakerEN.helpers.arrayElement([fakerEN, fakerRU]),
-      },
-    });
+    const locale = await ui.askLocale();
 
     const userCount: number = await ui.askInt('Enter number of users:');
     const adminCount: number = await ui.askInt('Enter number of admins:');

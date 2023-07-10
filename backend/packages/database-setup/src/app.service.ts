@@ -1,10 +1,12 @@
 import { stdout } from 'node:process';
 import { clearScreenDown, cursorTo } from 'node:readline';
-import { Injectable } from '@nestjs/common';
 import { terminal as term } from 'terminal-kit';
+import { Injectable } from '@nestjs/common';
+import { fakerEN, fakerRU } from '@faker-js/faker';
 import { Options, UI, Service, MsgType } from './service.interface';
 import { ThemeService } from './theme.service';
 import { UserService } from './user.service';
+import { CollectionService } from './collection.service';
 
 function isInt(input: string) {
   return (
@@ -17,11 +19,13 @@ export class AppService implements UI {
   constructor(
     private theme: ThemeService,
     private user: UserService,
+    private collection: CollectionService,
   ) {}
 
   private serviceList: Record<string, Service> = {
     Theme: this.theme,
     User: this.user,
+    Collection: this.collection,
   };
 
   private isExit = false;
@@ -32,7 +36,7 @@ export class AppService implements UI {
       try {
         this.clearDisplay(spaces);
         const service = await this.askOptions({
-          title: 'Select service to generate',
+          title: '\nSelect service to generate',
           map: this.serviceList,
         });
 
@@ -100,6 +104,27 @@ export class AppService implements UI {
     term('\n');
     if (result.selectedIndex === exitIndex) throw 'exit';
     else return values[result.selectedIndex];
+  }
+
+  async askReset() {
+    return await this.askOptions({
+      title: 'Reset all?',
+      map: {
+        Yes: true,
+        No: false,
+      },
+    });
+  }
+
+  async askLocale() {
+    return await this.askOptions({
+      title: 'What locale?',
+      map: {
+        Rus: () => fakerRU,
+        Eng: () => fakerEN,
+        Random: () => fakerEN.helpers.arrayElement([fakerEN, fakerRU]),
+      },
+    });
   }
 
   drawSeparator(length = 64 + 6) {

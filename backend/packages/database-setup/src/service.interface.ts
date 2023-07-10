@@ -1,3 +1,5 @@
+import { Faker } from "@faker-js/faker";
+
 export interface Service {
   execute(ui: UI): Promise<number>;
 }
@@ -18,6 +20,8 @@ export interface UI {
   askInt(title: string): Promise<number>;
   print(str: string, type?: MsgType): void;
   askOptions<T>(options: Options<T>): Promise<T>;
+  askReset(): Promise<boolean>;
+  askLocale(): Promise<() => Faker>;
   clearDisplay(upperLinesCount?: number): void;
   drawSeparator(length?: number): void;
 }
