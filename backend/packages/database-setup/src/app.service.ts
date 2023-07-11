@@ -7,6 +7,7 @@ import { Options, UI, Service, MsgType } from './service.interface';
 import { ThemeService } from './theme.service';
 import { UserService } from './user.service';
 import { CollectionService } from './collection.service';
+import { ItemService } from './item.service';
 
 function isInt(input: string) {
   return (
@@ -20,12 +21,14 @@ export class AppService implements UI {
     private theme: ThemeService,
     private user: UserService,
     private collection: CollectionService,
+    private item: ItemService,
   ) {}
 
   private serviceList: Record<string, Service> = {
     Theme: this.theme,
     User: this.user,
     Collection: this.collection,
+    Item: this.item,
   };
 
   private isExit = false;
@@ -58,7 +61,7 @@ export class AppService implements UI {
     const progress = term.progressBar({
       title: `${title} (${0}/${itemCount})`,
       titleStyle: term.cyan.bold,
-      titleSize: 100,
+      titleSize: 50,
       percent: true,
     });
 
