@@ -6,6 +6,7 @@ import { ThemeService } from './theme.service';
 import { DirectoryService } from './directory.service';
 import { UserService } from './user.service';
 import { CollectionService } from './collection.service';
+import { ItemService } from './item.service';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule],
@@ -15,6 +16,7 @@ import { CollectionService } from './collection.service';
     UserService,
     ThemeService,
     CollectionService,
+    ItemService,
   ],
 })
 export class AppModule {}
