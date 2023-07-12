@@ -14,10 +14,7 @@ import { sanitize } from 'isomorphic-dompurify';
 
 import { sanitizeFields } from './sanitize-fields';
 import { checkCollectionPermissions } from './check-permisson';
-import {
-  CreateCollectionDto,
-  UpdateCollectionDto,
-} from './dto';
+import { CreateCollectionDto, UpdateCollectionDto } from './dto';
 
 @Injectable()
 export class CollectionService {
@@ -59,9 +56,10 @@ export class CollectionService {
   async create(dto: CreateCollectionDto, user: TUserInfo): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
       if (user.role !== UserRole.ADMIN && user.id !== dto.ownerId)
-        throw new ForbiddenException(
-          `Can not create collection to another user`,
-        );
+        throw new ForbiddenException({
+          message: `Can not create collection to another user`,
+          messageCode: 'collection.forbidden',
+        });
 
       this.sanitizeDto(dto);
 

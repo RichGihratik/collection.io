@@ -60,7 +60,10 @@ export class RefreshService {
     const token = this.extractToken(req);
     if (!token) {
       this.logger.log('Token was not found.');
-      throw new UnauthorizedException('User unauthorized');
+      throw new UnauthorizedException({ 
+        message: 'User unauthorized',
+        messageCode: 'auth.unauthorised' 
+      });
     }
 
     this.logger.log('Found token in cookie. Verifying token sign...');
@@ -70,7 +73,10 @@ export class RefreshService {
         'Token has invalid type and/or signature. Clearing cookie...',
       );
       this.clearToken(res);
-      throw new UnauthorizedException('User unauthorized');
+      throw new UnauthorizedException({ 
+        message: 'Token invalid',
+        messageCode: 'auth.unauthorised' 
+      });
     }
 
     this.logger.log('Token sign is valid. Checking db info...');
@@ -87,12 +93,18 @@ export class RefreshService {
       );
       this.clearToken(res);
       await this.history.invalidateAll(payload[JwtFields.Id]);
-      throw new UnauthorizedException('User does not exist');
+      throw new UnauthorizedException({ 
+        message: 'User does not exist',
+        messageCode: 'auth.unauthorised' 
+      });
     } else if (user.status === UserStatus.BLOCKED) {
       this.logger.log(`User "${user.email}" is blocked. Clearing cookie...`);
       this.clearToken(res);
       await this.history.invalidateAll(user.id);
-      throw new ForbiddenException('User is blocked');
+      throw new ForbiddenException({ 
+        message: 'User is blocked',
+        messageCode: 'auth.blocked' 
+      });
     }
 
     this.logger.log(`Token of "${user.email}" is valid`);
@@ -117,7 +129,10 @@ export class RefreshService {
       this.logger.warn(
         `User ${user.email} attempted to refresh with used token. All tokens has been invalidated`,
       );
-      throw new ForbiddenException('Attempt to refresh with used token');
+      throw new ForbiddenException({ 
+        message: 'Attempt to refresh with used token',
+        messageCode: 'auth.usedRefresh' 
+      });
     }
     this.setCookie(newToken, res);
     this.logger.log(`User ${user.email} updated refresh token`);

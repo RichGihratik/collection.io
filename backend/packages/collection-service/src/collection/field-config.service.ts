@@ -18,8 +18,6 @@ export class FieldConfigService {
         info.id,
       );
 
-      if (!collection) throw new NotFoundException('Collection was not found!');
-
       const sanitizedDto = {
         create: sanitizeFields(dto.create).map((field) => ({
           ...field,

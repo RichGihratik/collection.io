@@ -106,7 +106,10 @@ export class CollectionSearchService {
         },
       });
 
-      if (!collection) throw new NotFoundException('Collection was not found');
+      if (!collection) throw new NotFoundException({
+        message: 'Collection was not found',
+        messageCode: 'collection.notFound'
+      });
 
       const theme = collection.themeName ?? 'Other';
       const itemsCount = collection._count.items;

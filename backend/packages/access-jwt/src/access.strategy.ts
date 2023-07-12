@@ -1,5 +1,6 @@
 import {
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -27,17 +28,38 @@ export class AccessStrategy extends Strategy {
   async validate(req: PlatformRequest, ctx: ExecutionContext) {
     const role = this.reflector.get<UserRole>(ROLES_METAKEY, ctx.getHandler());
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) throw new UnauthorizedException('Unauthorized');
+    if (!token)
+      throw new UnauthorizedException({
+        message: 'Unauthorized',
+        messageCode: 'auth.unauthorised',
+      });
 
     const info = this.jwt.verifyToken(token);
-    if (!info) throw new UnauthorizedException('Unauthorized');
+    if (!info)
+      throw new UnauthorizedException({
+        message: 'Unauthorized',
+        messageCode: 'auth.unauthorised',
+      });
 
     const user = await this.db.getUser(info[JwtFields.Id]);
-    if (!user) throw new UnauthorizedException('User not found');
+    if (!user)
+      throw new UnauthorizedException({
+        message: 'User not found',
+        messageCode: 'auth.unauthorised',
+      });
 
-    return (role !== UserRole.ADMIN || user.role === role) &&
-      user.status === UserStatus.ACTIVE
-      ? user
-      : undefined;
+    if (user.status === UserStatus.BLOCKED)
+      throw new ForbiddenException({
+        message: 'User is blocked',
+        messageCode: 'auth.blocked',
+      });
+
+    if (role === UserRole.ADMIN && user.role !== role)
+      throw new ForbiddenException({
+        message: 'Forbidden',
+        messageCode: 'auth.forbidden',
+      });
+
+    return user;
   }
 }

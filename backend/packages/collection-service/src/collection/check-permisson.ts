@@ -27,14 +27,19 @@ export async function checkCollectionPermissions(
       'CRUD method call without authorization',
     );
   if (ownerId && info.id !== ownerId && info.role !== UserRole.ADMIN) {
-    throw new ForbiddenException(`You can't assign collection to another user`);
+    throw new ForbiddenException({
+      message: `You can't assign collection to another user`,
+      messageCode: 'collection.forbidden'
+    });
   } else if (ownerId) {
     const user = await client.user.findUnique({
       where: { id: ownerId },
     });
     if (!user)
-      throw new BadRequestException(
-        `Can't assign collection to non existing user`,
+      throw new BadRequestException({
+          message: `Can't assign collection to non existing user`,
+          messageCode: 'collection.userNotFound'
+        }
       );
   }
 
@@ -49,12 +54,16 @@ export async function checkCollectionPermissions(
     },
   });
 
-  if (!collection) throw new NotFoundException('Collection was not found!');
+  if (!collection) throw new NotFoundException({
+    message: 'Collection was not found!',
+    messageCode: 'collection.notFound'
+  });
 
   if (info.role !== UserRole.ADMIN && collection.ownerId !== info.id)
-    throw new ForbiddenException(
-      `You can't access collection of another user!`,
-    );
+    throw new ForbiddenException({
+      message: `You can't assign collection to another user`,
+      messageCode: 'collection.forbidden'
+    });
 
   return collection;
 }

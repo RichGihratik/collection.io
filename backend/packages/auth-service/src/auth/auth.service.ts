@@ -32,7 +32,10 @@ export class AuthService {
 
     if (!user) {
       this.logger.log(`Email "${email}" not found when signing in`);
-      throw new BadRequestException('Incorrect email and/or password');
+      throw new BadRequestException({
+        message: 'Incorrect email and/or password',
+        messageCode: 'auth.incorrectCredentials',
+      });
     }
 
     this.checkUserStatus(user);
@@ -41,7 +44,10 @@ export class AuthService {
 
     if (!compareResult) {
       this.logger.log(`Invalid password for "${user.email}"`);
-      throw new BadRequestException('Incorrect email and/or password');
+      throw new BadRequestException({
+        message: 'Incorrect email and/or password',
+        messageCode: 'auth.incorrectCredentials',
+      });
     }
 
     await this.updateLogin(user.id);
@@ -66,7 +72,10 @@ export class AuthService {
 
       if (user) {
         this.logger.log(`Attempt to sign up with existing email: "${email}"`);
-        throw new BadRequestException('User with this email already exists');
+        throw new BadRequestException({
+          message: 'User with this email already exists',
+          messageCode: 'auth.accountExists',
+        });
       }
 
       const hash = await this.hashPassword(password);
@@ -113,7 +122,10 @@ export class AuthService {
   private checkUserStatus(user: User) {
     if (user.status === UserStatus.BLOCKED) {
       this.logger.log(`Blocked user "${user.email}" attempted to log in`);
-      throw new ForbiddenException('Account is blocked');
+      throw new ForbiddenException({
+        message: 'Account is blocked',
+        messageCode: 'auth.blocked',
+      });
     }
   }
 
