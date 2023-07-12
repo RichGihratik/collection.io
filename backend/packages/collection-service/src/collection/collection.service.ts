@@ -77,6 +77,7 @@ export class CollectionService {
         data: {
           name: dto.name,
           description: dto.description,
+          imageUrl: dto.imageUrl,
           ...this.getThemeQuery(themeName),
           ...this.getOwnerQuery(user, dto.ownerId),
           fields: {
@@ -122,6 +123,7 @@ export class CollectionService {
         data: {
           name,
           description,
+          imageUrl: dto.imageUrl,
           ...(this.getThemeQuery(themeName) ?? {
             theme: {
               disconnect: true,

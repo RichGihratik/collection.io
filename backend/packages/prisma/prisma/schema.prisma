@@ -30,6 +30,7 @@ model User {
   name              String
   email             String             @unique
   hash              String
+  avatarUrl         String?
   collections       Collection[]
   collectionRatings CollectionRating[]
   itemLikes         ItemLike[]
@@ -52,6 +53,7 @@ model Collection {
   id          Int                     @id @default(autoincrement())
   name        String
   description String
+  imageUrl    String?
   theme       CollectionTheme?        @relation(fields: [themeName], references: [name], onDelete: SetNull)
   themeName   String?
   owner       User                    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -78,6 +80,7 @@ model Item {
   name         String
   collection   Collection              @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId Int
+  createdAt    DateTime                @default(now())
   ts_eng       Unsupported("tsvector") @default(dbgenerated("to_tsvector('english'::regconfig, name)"))
   ts_rus       Unsupported("tsvector") @default(dbgenerated("to_tsvector('russian'::regconfig, name)"))
   fields       ItemValue[]

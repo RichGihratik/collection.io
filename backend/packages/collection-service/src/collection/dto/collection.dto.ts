@@ -7,6 +7,11 @@ export interface CollectionDto extends ObjectWithId, ObjectWithName {
   owner: Owner;
 
   /**
+   * @format url
+   */
+  imageUrl?: string;
+
+  /**
    * @type int
    */
   itemsCount: number;
