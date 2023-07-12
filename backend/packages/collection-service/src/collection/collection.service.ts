@@ -9,7 +9,7 @@ import {
   Prisma,
   UserRole,
 } from '@collection.io/prisma';
-import { TUserInfo } from '@collection.io/access-jwt';
+import { TUserInfo } from '@collection.io/access-auth';
 import { sanitize } from 'isomorphic-dompurify';
 
 import { sanitizeFields } from './sanitize-fields';

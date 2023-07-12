@@ -11,7 +11,7 @@ import {
   TUserInfo,
   UserInfo,
   UserInfoInterceptor,
-} from '@collection.io/access-jwt';
+} from '@collection.io/access-auth';
 import {
   CreateCollectionDto,
   UpdateCollectionDto,

@@ -1,6 +1,6 @@
 import { DatabaseService } from '@collection.io/prisma';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TUserInfo } from '@collection.io/access-jwt';
+import { TUserInfo } from '@collection.io/access-auth';
 import { Prisma } from '@collection.io/prisma';
 import { SearchLang, prepareSearch, OrderByType } from '@/search';
 

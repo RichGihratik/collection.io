@@ -3,10 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TUserInfo } from '@collection.io/access-jwt';
+import { TUserInfo, hashPassword, comparePasswords } from '@collection.io/access-auth';
 import { DatabaseService, User, UserRole } from '@collection.io/prisma';
 import { SearchUserDto, UpdateUserDto, UserDto, UserWithHash } from './dto';
-import { compare, hash } from 'bcrypt';
 
 function getSelectQuery(info: TUserInfo) {
   return {
@@ -19,17 +18,6 @@ function getSelectQuery(info: TUserInfo) {
     avatarUrl: true,
     email: info?.role === UserRole.ADMIN,
   };
-}
-
-// TODO Move these to access-jwt package
-
-async function hashPassword(password: string) {
-  const saltRounds = 10;
-  return await hash(password, saltRounds);
-}
-
-async function comparePasswords(password: string, hash: string) {
-  return await compare(password, hash);
 }
 
 type UpdateData = Partial<Pick<User, 'name' | 'avatarUrl' | 'hash' | 'email'>>;

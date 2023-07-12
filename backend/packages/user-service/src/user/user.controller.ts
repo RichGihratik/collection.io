@@ -5,7 +5,7 @@ import {
   TUserInfo,
   UserInfo,
   AuthGuard,
-} from '@collection.io/access-jwt';
+} from '@collection.io/access-auth';
 import { SearchUserDto, UpdateUserDto, UserDto } from './dto';
 import { UserService } from './user.service';
 

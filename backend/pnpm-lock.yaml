@@ -6,7 +6,7 @@ settings:
 
 importers:
 
-  packages/access-jwt:
+  packages/access-auth:
     dependencies:
       '@collection.io/prisma':
         specifier: workspace:^
@@ -17,6 +17,9 @@ importers:
       '@nestjs/jwt':
         specifier: ^10.1.0
         version: 10.1.0(@nestjs/common@10.0.5)
+      bcrypt:
+        specifier: ^5.1.0
+        version: 5.1.0
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
@@ -39,6 +42,9 @@ importers:
       '@nestjs/schematics':
         specifier: ^10.0.1
         version: 10.0.1(chokidar@3.5.3)(typescript@5.1.6)
+      '@types/bcrypt':
+        specifier: ^5.0.0
+        version: 5.0.0
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.17
@@ -81,9 +87,9 @@ importers:
 
   packages/auth-service:
     dependencies:
-      '@collection.io/access-jwt':
+      '@collection.io/access-auth':
         specifier: workspace:^
-        version: link:../access-jwt
+        version: link:../access-auth
       '@collection.io/prisma':
         specifier: workspace:^
         version: link:../prisma
@@ -193,9 +199,9 @@ importers:
 
   packages/collection-service:
     dependencies:
-      '@collection.io/access-jwt':
+      '@collection.io/access-auth':
         specifier: workspace:^
-        version: link:../access-jwt
+        version: link:../access-auth
       '@collection.io/prisma':
         specifier: workspace:^
         version: link:../prisma
@@ -284,6 +290,9 @@ importers:
 
   packages/database-setup:
     dependencies:
+      '@collection.io/access-auth':
+        specifier: workspace:^
+        version: link:../access-auth
       '@collection.io/prisma':
         specifier: workspace:^
         version: link:../prisma
@@ -299,9 +308,6 @@ importers:
       '@nestjs/core':
         specifier: ^10.0.5
         version: 10.0.5(@nestjs/common@10.0.5)(@nestjs/platform-express@10.0.5)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      bcrypt:
-        specifier: ^5.1.0
-        version: 5.1.0
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
@@ -318,9 +324,6 @@ importers:
       '@nestjs/schematics':
         specifier: ^10.0.1
         version: 10.0.1(chokidar@3.5.3)(typescript@5.1.6)
-      '@types/bcrypt':
-        specifier: ^5.0.0
-        version: 5.0.0
       '@types/node':
         specifier: 20.4.1
         version: 20.4.1
@@ -418,9 +421,9 @@ importers:
 
   packages/user-service:
     dependencies:
-      '@collection.io/access-jwt':
+      '@collection.io/access-auth':
         specifier: workspace:^
-        version: link:../access-jwt
+        version: link:../access-auth
       '@collection.io/prisma':
         specifier: workspace:^
         version: link:../prisma
@@ -442,9 +445,6 @@ importers:
       '@nestjs/platform-fastify':
         specifier: ^10.0.5
         version: 10.0.5(@nestjs/common@10.0.5)(@nestjs/core@10.0.5)
-      bcrypt:
-        specifier: ^5.1.0
-        version: 5.1.0
       fastify:
         specifier: ^4.19.2
         version: 4.19.2
@@ -464,9 +464,6 @@ importers:
       '@nestjs/schematics':
         specifier: ^10.0.1
         version: 10.0.1(chokidar@3.5.3)(typescript@5.1.6)
-      '@types/bcrypt':
-        specifier: ^5.0.0
-        version: 5.0.0
       '@types/node':
         specifier: 20.4.1
         version: 20.4.1

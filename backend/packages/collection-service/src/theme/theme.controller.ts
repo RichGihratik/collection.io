@@ -1,6 +1,6 @@
 import { Controller, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
-import { AuthGuard, Role } from '@collection.io/access-jwt';
+import { AuthGuard, Role } from '@collection.io/access-auth';
 import { CollectionTheme, UserRole } from '@collection.io/prisma';
 import { CreateThemeDto, UpdateThemeDto } from './dto';
 import { ThemeService } from './theme.service';

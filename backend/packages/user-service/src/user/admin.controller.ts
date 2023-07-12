@@ -1,7 +1,7 @@
-import { Controller, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { TypedBody, TypedRoute } from '@nestia/core';
 import { UserRole } from '@collection.io/prisma';
-import { AuthGuard, Role } from '@collection.io/access-jwt';
+import { AuthGuard, Role } from '@collection.io/access-auth';
 import { UserIdsDto, AdminActionDto } from './dto';
 import { AdminService } from './admin.service';
 

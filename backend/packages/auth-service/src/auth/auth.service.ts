@@ -5,9 +5,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { hash, compare } from 'bcrypt';
 import { sanitize } from 'isomorphic-dompurify';
-import { CreateTokenService } from '@collection.io/access-jwt';
+import { CreateTokenService, hashPassword, comparePasswords } from '@collection.io/access-auth';
 import { DatabaseService, User, UserStatus } from '@collection.io/prisma';
 
 import { SigninDto, SignupDto, TokenDto } from './dto';
@@ -40,7 +39,7 @@ export class AuthService {
 
     this.checkUserStatus(user);
 
-    const compareResult = await this.comparePasswords(password, user.hash);
+    const compareResult = await comparePasswords(password, user.hash);
 
     if (!compareResult) {
       this.logger.log(`Invalid password for "${user.email}"`);
@@ -78,7 +77,7 @@ export class AuthService {
         });
       }
 
-      const hash = await this.hashPassword(password);
+      const hash = await hashPassword(password);
 
       user = await tx.user.create({
         data: {
@@ -127,15 +126,6 @@ export class AuthService {
         messageCode: 'auth.blocked',
       });
     }
-  }
-
-  private async hashPassword(password: string) {
-    const saltRounds = 10;
-    return await hash(password, saltRounds);
-  }
-
-  private async comparePasswords(password: string, hash: string) {
-    return await compare(password, hash);
   }
 
   private async updateLogin(id: number) {

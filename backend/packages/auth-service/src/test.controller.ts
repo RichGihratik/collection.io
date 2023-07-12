@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { Role, AuthGuard, UserInfo } from '@collection.io/access-jwt';
+import { Role, AuthGuard, UserInfo } from '@collection.io/access-auth';
 import { User } from '@collection.io/prisma';
 
 @Controller('test')

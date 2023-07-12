@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AccessJwtModule } from '@collection.io/access-jwt';
+import { AccessJwtModule } from '@collection.io/access-auth';
 import { DatabaseModule } from '@collection.io/prisma';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';

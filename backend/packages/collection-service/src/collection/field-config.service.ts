@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@collection.io/prisma';
-import { TUserInfo } from '@collection.io/access-jwt';
+import { TUserInfo } from '@collection.io/access-auth';
 import { checkCollectionPermissions } from './check-permisson';
 import { UpdateFieldsDto } from './dto';
 import { sanitizeFields } from './sanitize-fields';

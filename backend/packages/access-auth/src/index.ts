@@ -8,3 +8,8 @@ export {
   UserInfoSelectQuery,
 } from './user-info';
 export { AuthGuard } from './auth.guard';
+export {
+  comparePasswords,
+  hashPassword,
+  hashPasswordSync,
+} from './password-utils';

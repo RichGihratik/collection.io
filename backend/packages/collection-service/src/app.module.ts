@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AccessJwtModule } from '@collection.io/access-jwt';
+import { AccessJwtModule } from '@collection.io/access-auth';
 import { CollectionModule } from './collection';
 import { ThemeModule } from './theme';
 

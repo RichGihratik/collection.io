@@ -1,8 +1,7 @@
 import { randomBytes } from 'crypto';
-import { Faker, fakerEN, fakerRU } from '@faker-js/faker';
 import { Injectable } from '@nestjs/common';
-import { hashSync } from 'bcrypt';
 import { DatabaseService, UserRole } from '@collection.io/prisma';
+import { hashPasswordSync } from '@collection.io/access-auth';
 import { MsgType, Service, UI } from './service.interface';
 import { DirectoryService } from './directory.service';
 
@@ -16,11 +15,6 @@ export class UserService implements Service {
 
   private createPassword() {
     return randomBytes(passwordLength).toString('hex');
-  }
-
-  private hashPassword(password: string) {
-    const saltRounds = 10;
-    return hashSync(password, saltRounds);
   }
 
   async execute(ui: UI): Promise<number> {
@@ -46,7 +40,7 @@ export class UserService implements Service {
     const preparedUserData = userData.map((data) => ({
       name: data.name,
       email: data.email,
-      hash: this.hashPassword(data.password),
+      hash: hashPasswordSync(data.password),
     }));
 
     const adminData = Array.from(new Array(adminCount), () => {
@@ -63,7 +57,7 @@ export class UserService implements Service {
       name: data.name,
       email: data.email,
       role: UserRole.ADMIN,
-      hash: this.hashPassword(data.password),
+      hash: hashPasswordSync(data.password),
     }));
 
     // Perform transaction
