@@ -22,4 +22,15 @@ export interface UserDto {
    * @format date-time
    */
   lastLogin: Date;
+
+  /**
+   * @format url
+   */
+  avatarUrl?: string;
+
+  
+}
+
+export interface UserWithHash extends UserDto {
+  hash?: string;
 }

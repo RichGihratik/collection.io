@@ -1,58 +1,51 @@
+import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { Controller, UseGuards, UseInterceptors } from '@nestjs/common';
-import { TypedBody, TypedRoute } from '@nestia/core';
-import { UserRole } from '@collection.io/prisma';
 import {
-  AuthGuard,
-  Role,
+  UserInfoInterceptor,
   TUserInfo,
   UserInfo,
-  UserInfoInterceptor,
+  AuthGuard,
 } from '@collection.io/access-jwt';
-import { UserDto, UserIdsDto } from './dto';
+import { SearchUserDto, UpdateUserDto, UserDto } from './dto';
 import { UserService } from './user.service';
 
-@Controller()
+@Controller('user')
 export class UserController {
-  constructor(private service: UserService) {}
+  constructor(private user: UserService) {}
 
   @TypedRoute.Get()
   @UseInterceptors(UserInfoInterceptor)
-  getUsers(@UserInfo() info: TUserInfo): Promise<UserDto[]> {
-    return this.service.getUsers(info);
+  search(
+    @UserInfo()
+    info: TUserInfo,
+    @TypedQuery()
+    dto: SearchUserDto,
+  ): Promise<UserDto[]> {
+    return this.user.search(dto, info);
   }
 
-  @TypedRoute.Delete('delete')
-  @Role(UserRole.ADMIN)
-  @UseGuards(AuthGuard)
-  deleteUsers(@TypedBody() dto: UserIdsDto): Promise<string> {
-    return this.service.deleteUsers(dto.users);
+  @TypedRoute.Get(':id')
+  @UseInterceptors(UserInfoInterceptor)
+  get(
+    @UserInfo()
+    info: TUserInfo,
+    @TypedParam('id')
+    id: number,
+  ): Promise<UserDto> {
+    return this.user.get(id, info);
   }
 
-  @TypedRoute.Patch('block')
-  @Role(UserRole.ADMIN)
+  @TypedRoute.Patch(':id')
   @UseGuards(AuthGuard)
-  blockUsers(@TypedBody() dto: UserIdsDto): Promise<string> {
-    return this.service.blockUsers(dto.users);
-  }
-
-  @TypedRoute.Patch('unblock')
-  @Role(UserRole.ADMIN)
-  @UseGuards(AuthGuard)
-  unblockUsers(@TypedBody() dto: UserIdsDto): Promise<string> {
-    return this.service.unblockUsers(dto.users);
-  }
-
-  @TypedRoute.Patch('promote')
-  @Role(UserRole.ADMIN)
-  @UseGuards(AuthGuard)
-  promoteUsers(@TypedBody() dto: UserIdsDto): Promise<string> {
-    return this.service.promoteUsers(dto.users);
-  }
-
-  @TypedRoute.Patch('downgrade')
-  @Role(UserRole.ADMIN)
-  @UseGuards(AuthGuard)
-  downgradeUsers(@TypedBody() dto: UserIdsDto): Promise<string> {
-    return this.service.downgradeUsers(dto.users);
+  async update(
+    @UserInfo()
+    info: TUserInfo,
+    @TypedParam('id')
+    id: number,
+    @TypedBody()
+    dto: UpdateUserDto,
+  ) {
+    await this.user.update(id, dto, info); 
+    return 'Updated successfully';
   }
 }

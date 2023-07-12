@@ -1,96 +1,123 @@
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-jwt';
-import { DatabaseService, UserRole, UserStatus } from '@collection.io/prisma';
-import { Injectable } from '@nestjs/common';
+import { DatabaseService, User, UserRole } from '@collection.io/prisma';
+import { SearchUserDto, UpdateUserDto, UserDto, UserWithHash } from './dto';
+import { compare, hash } from 'bcrypt';
 
+function getSelectQuery(info: TUserInfo) {
+  return {
+    id: true,
+    name: true,
+    lastLogin: true,
+    createdAt: true,
+    role: true,
+    status: true,
+    avatarUrl: true,
+    email: info?.role === UserRole.ADMIN,
+  };
+}
+
+// TODO Move these to access-jwt package
+
+async function hashPassword(password: string) {
+  const saltRounds = 10;
+  return await hash(password, saltRounds);
+}
+
+async function comparePasswords(password: string, hash: string) {
+  return await compare(password, hash);
+}
+
+type UpdateData = Partial<Pick<User, 'name' | 'avatarUrl' | 'hash' | 'email'>>;
 @Injectable()
 export class UserService {
   constructor(private db: DatabaseService) {}
 
-  async getUsers(info: TUserInfo) {
-    const users = await this.db.user.findMany({
+  async update(id: number, dto: UpdateUserDto, info: TUserInfo) {
+    const user = await this.get(id, info, true);
+
+    if (!user.hash) throw new Error('Hash is required to process!'); 
+
+    if (info.id !== id && info.role !== UserRole.ADMIN)
+      throw new ForbiddenException({
+        message: 'Forbidden',
+        messageCode: 'user.forbidden',
+      });
+
+    const updateData: UpdateData = { ...dto };
+    delete updateData.avatarUrl;
+
+    // TODO Make email validation
+    delete updateData.email;
+
+    if (dto.avatarUrl || dto.avatarUrl === null)
+      updateData.avatarUrl = dto.avatarUrl;
+    if (dto.password && await comparePasswords(dto.password.old, user.hash)) {
+      updateData.hash = await hashPassword(dto.password.new);
+    }
+
+    return await this.db.user.update({
+      where: {
+        id,
+      },
+      data: updateData,
       select: {
         id: true,
-        name: true,
-        lastLogin: true,
-        createdAt: true,
-        role: true,
-        status: true,
-        email: info?.role === UserRole.ADMIN,
       },
     });
-
-    return users;
   }
 
-  async blockUsers(ids: number[]) {
-    await this.db.user.updateMany({
-      where: {
-        id: {
-          in: ids,
-        },
+  async get(
+    id: number,
+    info: TUserInfo,
+    includeHash = false,
+  ): Promise<UserWithHash> {
+    const user = await this.db.user.findUnique({
+      select: {
+        ...getSelectQuery(info),
+        hash: includeHash,
       },
-      data: {
-        status: UserStatus.BLOCKED,
+      where: {
+        id,
       },
     });
 
-    return 'Users blocked successfully';
+    if (!user)
+      throw new NotFoundException({
+        message: 'User was not found!',
+        messageCode: 'user.notFound',
+      });
+
+    return {
+      ...user,
+      avatarUrl: user.avatarUrl ? user.avatarUrl : undefined,
+    };
   }
 
-  async unblockUsers(ids: number[]) {
-    await this.db.user.updateMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-      data: {
-        status: UserStatus.ACTIVE,
-      },
-    });
+  async search(dto: SearchUserDto, info: TUserInfo): Promise<UserDto[]> {
+    const wherePart = dto.searchBy
+      ? {
+          name: {
+            contains: dto.searchBy,
+          },
+        }
+      : {};
 
-    return 'Users unblocked successfully';
-  }
-
-  async deleteUsers(ids: number[]) {
-    await this.db.user.deleteMany({
-      where: {
-        id: {
-          in: ids,
-        },
+    const users = await this.db.user.findMany({
+      select: getSelectQuery(info),
+      where: wherePart,
+      orderBy: {
+        name: 'asc',
       },
     });
 
-    return 'Users deleted successfully';
-  }
-
-  async promoteUsers(ids: number[]) {
-    await this.db.user.updateMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-      data: {
-        role: UserRole.ADMIN,
-      },
-    });
-
-    return 'Users promoted successfully';
-  }
-
-  async downgradeUsers(ids: number[]) {
-    await this.db.user.updateMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-      data: {
-        role: UserRole.CUSTOMER,
-      },
-    });
-
-    return 'Users promoted successfully';
+    return users.map((user) => ({
+      ...user,
+      avatarUrl: user.avatarUrl ? user.avatarUrl : undefined,
+    }));
   }
 }
