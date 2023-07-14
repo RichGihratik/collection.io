@@ -37,7 +37,7 @@ export class CollectionSearchService {
       `;
 
       orderPart = Prisma.sql`
-        GREATEST(ts_rank(c."ts_rus", ${rusSearch}), ts_rank(c."ts_eng", ${engSearch})) DESC,
+        LEAST(ts_rank(c."ts_rus", ${rusSearch}), ts_rank(c."ts_eng", ${engSearch})) DESC,
         ${orderPart}
       `;
     }

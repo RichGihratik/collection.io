@@ -1,12 +1,10 @@
 import {
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import {
   Collection,
   DatabaseService,
-  Prisma,
   UserRole,
 } from '@collection.io/prisma';
 import { TUserInfo } from '@collection.io/access-auth';

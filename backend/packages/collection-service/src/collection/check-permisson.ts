@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { TUserInfo } from '@collection.io/access-jwt';
+import { TUserInfo } from '@collection.io/access-auth';
 import { UserRole } from '@collection.io/prisma';
 import { DatabaseClient, Field } from '@/common';
 
