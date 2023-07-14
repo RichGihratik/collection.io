@@ -1,38 +1,66 @@
-import { Controller, UseGuards } from '@nestjs/common';
-import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
-import { AuthGuard, TUserInfo, UserInfo } from '@collection.io/access-jwt';
+import { Controller, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
+import { AuthGuard, TUserInfo, UserInfo } from '@collection.io/access-auth';
+import { ItemService } from './item.service';
+import { ItemSearchService } from './item-search.service';
+import { CreateItemDto, Item, SearchOptionsDto } from './dto';
 
 @Controller('items')
 export class ItemController {
+  constructor(
+    private item: ItemService,
+    private search: ItemSearchService,
+  ) {}
+
   @TypedRoute.Get()
-  getItems() {
-    return [];
+  getItems(
+    @TypedQuery()
+    dto: SearchOptionsDto
+  ): Promise<Item[]> {
+    return this.search.search(dto);
   }
 
   @TypedRoute.Get(':id')
-  getItem(@TypedParam('id') id: number) {
-    return { id };
+  getItem(@TypedParam('id') id: number): Promise<Item> {
+    return this.search.get(id);
   }
 
-  @TypedRoute.Post('create')
   @UseGuards(AuthGuard)
-  create(@TypedBody() dto, @UserInfo() info: TUserInfo) {
-    return { dto, info };
+  @TypedRoute.Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @TypedBody()
+    dto: CreateItemDto,
+    @UserInfo()
+    info: TUserInfo,
+  ): Promise<string> {
+    await this.item.create(dto, info);
+    return 'Created successfully';
   }
 
-  @TypedRoute.Patch('update/:id')
   @UseGuards(AuthGuard)
-  update(
-    @TypedParam('id') id: number,
-    @TypedBody() dto,
-    @UserInfo() info: TUserInfo,
-  ) {
-    return { id, dto, info };
+  @TypedRoute.Patch(':id')
+  async update(
+    @TypedParam('id')
+    id: number,
+    @TypedBody()
+    dto,
+    @UserInfo()
+    info: TUserInfo,
+  ): Promise<string> {
+    await this.item.update(id, dto, info);
+    return 'Updated successfully';
   }
 
-  @TypedRoute.Delete('delete')
   @UseGuards(AuthGuard)
-  delete(@TypedBody() dto, @UserInfo() info: TUserInfo) {
-    return { dto, info };
+  @TypedRoute.Delete(':id')
+  async delete(
+    @TypedParam('id')
+    id: number,
+    @UserInfo()
+    info: TUserInfo,
+  ): Promise<string> {
+    await this.item.delete(id, info);
+    return 'Deleted successfully';
   }
 }
