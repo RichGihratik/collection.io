@@ -119,8 +119,6 @@ export class ItemSearchService {
         }${dto.offset ? Prisma.sql`\nOFFSET ${dto.offset}` : Prisma.empty};
     `;
 
-    console.log(items);
-
     return items;
   }
 

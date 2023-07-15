@@ -29,8 +29,7 @@ export function isValidField(item: unknown, type: FieldType): boolean {
     case FieldType.DATE:
       return isDate(item);
     case FieldType.INT:
-      // From https://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
-      return typeof item === 'number' && (item | 0) === item;
+      return typeof item === 'number' && Number.isInteger(item);
   }
 }
 
