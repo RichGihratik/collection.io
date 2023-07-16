@@ -31,6 +31,7 @@ export class UserService implements Service {
       const faker = locale();
 
       return {
+        avatarUrl: faker.helpers.maybe(() => faker.image.avatar()),
         name: faker.internet.userName(),
         email: faker.internet.email(),
         password: this.createPassword(),
@@ -40,6 +41,7 @@ export class UserService implements Service {
     const preparedUserData = userData.map((data) => ({
       name: data.name,
       email: data.email,
+      avatarUrl: data.avatarUrl,
       hash: hashPasswordSync(data.password),
     }));
 
@@ -47,6 +49,7 @@ export class UserService implements Service {
       const faker = locale();
 
       return {
+        avatarUrl: faker.helpers.maybe(() => faker.image.avatar()),
         name: faker.internet.userName(),
         email: faker.internet.email(),
         password: this.createPassword(),
@@ -56,6 +59,7 @@ export class UserService implements Service {
     const preparedAdminData = adminData.map((data) => ({
       name: data.name,
       email: data.email,
+      avatarUrl: data.avatarUrl,
       role: UserRole.ADMIN,
       hash: hashPasswordSync(data.password),
     }));

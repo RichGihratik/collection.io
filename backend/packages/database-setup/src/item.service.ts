@@ -20,7 +20,7 @@ export class ItemService implements Service {
           value = faker.helpers.arrayElement([true, false]).toString();
           break;
         case FieldType.DATE:
-          value = faker.date.anytime().toUTCString();
+          value = faker.date.anytime().toISOString();
           break;
         case FieldType.INT:
           value = faker.number.int({ min: 0, max: 12000 }).toString();

@@ -60,6 +60,7 @@ export class CollectionService implements Service {
         themeName: faker.helpers.arrayElement([...themes, null]),
         ownerId: faker.helpers.arrayElement(users),
         fields: this.generateFields(faker),
+        imageUrl: faker.image.url(),
       };
     });
 
@@ -78,6 +79,7 @@ export class CollectionService implements Service {
           description: item.description,
           ownerId: item.ownerId,
           themeName: item.themeName,
+          imageUrl: item.imageUrl,
           fields: {
             createMany: {
               data: item.fields,
