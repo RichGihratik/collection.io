@@ -1,7 +1,7 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-auth';
-import { Collection, FieldConfig, UserRole } from '@collection.io/prisma';
+import { FieldConfig, UserRole } from '@collection.io/prisma';
 import { DatabaseClient } from '@/common';
+import { ItemForbidden, ItemNotFound } from './exceptions';
 
 type CollectionResult = {
   id: number;
@@ -13,7 +13,7 @@ type CollectionResult = {
 type ItemResult = {
   id: number;
   collection: CollectionResult;
-}
+};
 
 export async function checkItemPermissions(
   dbx: DatabaseClient,
@@ -30,17 +30,15 @@ export async function checkItemPermissions(
           id: true,
           name: true,
           ownerId: true,
-        }
+        },
       },
     },
   });
 
-  if (!item) throw new NotFoundException('Item was not found!');
+  if (!item) throw new ItemNotFound();
 
   if (user.role !== UserRole.ADMIN && item.collection.ownerId !== user.id)
-    throw new ForbiddenException(
-      `You don't have permission to change this item`,
-    );
+    throw new ItemForbidden();
 
   return item;
 }
