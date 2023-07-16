@@ -19,6 +19,7 @@ import {
   UpdateFieldsDto,
   CollectionDto,
   CollectionFullInfoDto,
+  RateDto,
 } from './dto';
 import { CollectionService } from './collection.service';
 import { FieldConfigService } from './field-config.service';
@@ -76,6 +77,20 @@ export class CollectionController {
   ) {
     await this.collection.update(id, dto, info);
     return 'Updated successfully';
+  }
+
+  @TypedRoute.Patch(':id')
+  @UseGuards(AuthGuard)
+  async rate(
+    @TypedParam('id')
+    id: number,
+    @TypedBody()
+    dto: RateDto,
+    @UserInfo()
+    info: TUserInfo,
+  ) {
+    await this.collection.rate(id, dto, info);
+    return 'Rated successfully';
   }
 
   @TypedRoute.Delete(':id')

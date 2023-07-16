@@ -1,18 +1,12 @@
-import {
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
-import {
-  Collection,
-  DatabaseService,
-  UserRole,
-} from '@collection.io/prisma';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Collection, DatabaseService, UserRole } from '@collection.io/prisma';
 import { TUserInfo } from '@collection.io/access-auth';
 import { sanitize } from 'isomorphic-dompurify';
 
 import { sanitizeFields } from './sanitize-fields';
 import { checkCollectionPermissions } from './check-permisson';
-import { CreateCollectionDto, UpdateCollectionDto } from './dto';
+import { CreateCollectionDto, RateDto, UpdateCollectionDto } from './dto';
+import { CollectionForbidden, CollectionNotFound } from './errors';
 
 @Injectable()
 export class CollectionService {
@@ -54,10 +48,7 @@ export class CollectionService {
   async create(dto: CreateCollectionDto, user: TUserInfo): Promise<Collection> {
     return await this.db.$transaction(async (dbx) => {
       if (user.role !== UserRole.ADMIN && user.id !== dto.ownerId)
-        throw new ForbiddenException({
-          message: `Can not create collection to another user`,
-          messageCode: 'collection.forbidden',
-        });
+        throw new CollectionForbidden();
 
       this.sanitizeDto(dto);
 
@@ -126,6 +117,31 @@ export class CollectionService {
           ...this.getOwnerQuery(user, dto.ownerId),
         },
       });
+    });
+  }
+
+  async rate(id: number, dto: RateDto, user: TUserInfo) {
+    const collection = await this.db.collection.findUnique({
+      where: { id }
+    });
+
+    if (!collection) throw new CollectionNotFound();
+
+    await this.db.collectionRating.upsert({
+      where: {
+        ownerId_collectionId: {
+          collectionId: id,
+          ownerId: user.id,
+        },
+      },
+      create: {
+        collectionId: id,
+        ownerId: user.id,
+        rating: dto.rating,
+      },
+      update: {
+        rating: dto.rating,
+      },
     });
   }
 
