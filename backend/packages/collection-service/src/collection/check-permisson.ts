@@ -1,12 +1,11 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-auth';
 import { UserRole } from '@collection.io/prisma';
 import { DatabaseClient, Field } from '@/common';
+import {
+  CollectionForbidden,
+  CollectionNotFound,
+  UserNotFound,
+} from './errors';
 
 type CollectionType = {
   name: string;
@@ -23,24 +22,16 @@ export async function checkCollectionPermissions(
   ownerId?: number | null,
 ): Promise<CollectionType> {
   if (!info)
-    throw new InternalServerErrorException(
+    throw new Error(
       'CRUD method call without authorization',
     );
   if (ownerId && info.id !== ownerId && info.role !== UserRole.ADMIN) {
-    throw new ForbiddenException({
-      message: `You can't assign collection to another user`,
-      messageCode: 'collection.forbidden'
-    });
+    throw new CollectionForbidden();
   } else if (ownerId) {
     const user = await client.user.findUnique({
       where: { id: ownerId },
     });
-    if (!user)
-      throw new BadRequestException({
-          message: `Can't assign collection to non existing user`,
-          messageCode: 'collection.userNotFound'
-        }
-      );
+    if (!user) throw new UserNotFound();
   }
 
   const collection = await client.collection.findUnique({
@@ -54,16 +45,10 @@ export async function checkCollectionPermissions(
     },
   });
 
-  if (!collection) throw new NotFoundException({
-    message: 'Collection was not found!',
-    messageCode: 'collection.notFound'
-  });
+  if (!collection) throw new CollectionNotFound();
 
   if (info.role !== UserRole.ADMIN && collection.ownerId !== info.id)
-    throw new ForbiddenException({
-      message: `You can't assign collection to another user`,
-      messageCode: 'collection.forbidden'
-    });
+    throw new CollectionForbidden();
 
   return collection;
 }
