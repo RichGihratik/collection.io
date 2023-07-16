@@ -79,7 +79,7 @@ export class CollectionController {
     return 'Updated successfully';
   }
 
-  @TypedRoute.Patch(':id')
+  @TypedRoute.Patch(':id/rating')
   @UseGuards(AuthGuard)
   async rate(
     @TypedParam('id')
