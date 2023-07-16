@@ -3,7 +3,7 @@ import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { AuthGuard, TUserInfo, UserInfo } from '@collection.io/access-auth';
 import { ItemService } from './item.service';
 import { ItemSearchService } from './item-search.service';
-import { CreateItemDto, Item, SearchOptionsDto, UpdateItemDto } from './dto';
+import { CreateItemDto, Item, LikeDto, SearchOptionsDto, UpdateItemDto } from './dto';
 
 @Controller('items')
 export class ItemController {
@@ -49,6 +49,20 @@ export class ItemController {
     info: TUserInfo,
   ): Promise<string> {
     await this.item.update(id, dto, info);
+    return 'Updated successfully';
+  }
+
+  @UseGuards(AuthGuard)
+  @TypedRoute.Patch(':id/like')
+  async like(
+    @TypedParam('id')
+    id: number,
+    @TypedBody()
+    dto: LikeDto,
+    @UserInfo()
+    info: TUserInfo,
+  ): Promise<string> {
+    await this.item.like(id, dto, info);
     return 'Updated successfully';
   }
 

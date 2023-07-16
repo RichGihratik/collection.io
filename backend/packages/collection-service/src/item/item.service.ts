@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-auth';
 import { DatabaseService, Item } from '@collection.io/prisma';
 import { checkCollectionPermissions } from '@/collection';
 import { Field, isValidField } from '@/common';
-import { CreateItemDto, ItemValues, UpdateItemDto } from './dto';
+import { CreateItemDto, ItemValues, LikeDto, UpdateItemDto } from './dto';
 import { checkItemPermissions } from './check-permissions';
 import { sanitize } from 'isomorphic-dompurify';
+import { InvalidFields, ItemNotFound } from './exceptions';
 
 @Injectable()
 export class ItemService {
@@ -19,7 +20,7 @@ export class ItemService {
     return fields.flatMap((field) => {
       if (obj[field.name] === undefined) return [];
       if (!isValidField(obj[field.name], field.type))
-        throw new BadRequestException('Invalid field types');
+        throw new InvalidFields();
       return {
         collectionId,
         fieldName: field.name,
@@ -107,6 +108,31 @@ export class ItemService {
             },
           })),
         },
+      },
+    });
+  }
+
+  async like(id: number, dto: LikeDto, user: TUserInfo) {
+    const item = await this.db.item.findUnique({
+      where: { id }
+    });
+
+    if (!item) throw new ItemNotFound();
+
+    await this.db.itemLike.upsert({
+      where: {
+        itemId_ownerId: {
+          itemId: id,
+          ownerId: user.id,
+        },
+      },
+      create: {
+        itemId: id,
+        ownerId: user.id,
+        like: dto.like,
+      },
+      update: {
+        like: dto.like,
       },
     });
   }
