@@ -5,7 +5,7 @@ import {
   CollectionForbidden,
   CollectionNotFound,
   UserNotFound,
-} from './errors';
+} from './exceptions';
 
 type CollectionType = {
   name: string;

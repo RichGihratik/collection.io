@@ -6,7 +6,7 @@ import { sanitize } from 'isomorphic-dompurify';
 import { sanitizeFields } from './sanitize-fields';
 import { checkCollectionPermissions } from './check-permisson';
 import { CreateCollectionDto, RateDto, UpdateCollectionDto } from './dto';
-import { CollectionForbidden, CollectionNotFound } from './errors';
+import { CollectionForbidden, CollectionNotFound } from './exceptions';
 
 @Injectable()
 export class CollectionService {
