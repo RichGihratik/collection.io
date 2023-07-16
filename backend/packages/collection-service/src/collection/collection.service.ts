@@ -102,10 +102,6 @@ export class CollectionService {
       );
 
       this.sanitizeDto(dto);
-
-      const description = dto.description ?? collection.description;
-      const name = dto.name ?? collection.name;
-
       let themeName: string | undefined = collection.themeName ?? undefined;
 
       if (dto.themeName) {
@@ -119,8 +115,8 @@ export class CollectionService {
       return await dbx.collection.update({
         where: { id },
         data: {
-          name,
-          description,
+          name: dto.name,
+          description: dto.description,
           imageUrl: dto.imageUrl,
           ...(this.getThemeQuery(themeName) ?? {
             theme: {

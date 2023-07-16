@@ -1,17 +1,37 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-auth';
-import { Collection, UserRole } from '@collection.io/prisma';
+import { Collection, FieldConfig, UserRole } from '@collection.io/prisma';
 import { DatabaseClient } from '@/common';
+
+type CollectionResult = {
+  id: number;
+  name: string;
+  fields: FieldConfig[];
+  ownerId: number;
+};
+
+type ItemResult = {
+  id: number;
+  collection: CollectionResult;
+}
 
 export async function checkItemPermissions(
   dbx: DatabaseClient,
   user: TUserInfo,
   itemId: number,
-): Promise<{ collection: Collection }> {
+): Promise<ItemResult> {
   const item = await dbx.item.findUnique({
     where: { id: itemId },
     select: {
-      collection: true,
+      id: true,
+      collection: {
+        select: {
+          fields: true,
+          id: true,
+          name: true,
+          ownerId: true,
+        }
+      },
     },
   });
 

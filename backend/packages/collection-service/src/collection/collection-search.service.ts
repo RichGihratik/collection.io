@@ -125,7 +125,7 @@ export class CollectionSearchService {
       });
 
       if (user) {
-        collection['viewerRating'] = await dbx.collectionRating.findUnique({
+       const viewerRating = await dbx.collectionRating.findUnique({
           where: {
             ownerId_collectionId: {
               ownerId: user.id,
@@ -133,6 +133,7 @@ export class CollectionSearchService {
             },
           },
         });
+        if (viewerRating) collection['viewerRating'] = viewerRating;
       }
 
       return {

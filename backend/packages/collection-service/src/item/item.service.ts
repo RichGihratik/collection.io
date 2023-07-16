@@ -3,7 +3,7 @@ import { TUserInfo } from '@collection.io/access-auth';
 import { DatabaseService, Item } from '@collection.io/prisma';
 import { checkCollectionPermissions } from '@/collection';
 import { Field, isValidField } from '@/common';
-import { CreateItemDto, ItemValues } from './dto';
+import { CreateItemDto, ItemValues, UpdateItemDto } from './dto';
 import { checkItemPermissions } from './check-permissions';
 import { sanitize } from 'isomorphic-dompurify';
 
@@ -60,11 +60,54 @@ export class ItemService {
     });
   }
 
-  // TODO Create update function
-  async update(id: number, dto, user: TUserInfo): Promise<Item> {
-    return await this.db.$transaction(async (dbx) => {
-      await checkItemPermissions(dbx, user, id);
-      return await dbx.item.delete({ where: { id } });
+  async update(id: number, dto: UpdateItemDto, user: TUserInfo): Promise<Item> {
+    const item = await checkItemPermissions(this.db, user, id);
+
+    if (dto.fields) {
+      const values = this.getFieldValues(
+        item.collection.fields,
+        dto.fields,
+        item.collection.id,
+      );
+
+      await this.db.$transaction(async (dbx) => {
+        for (const value of values) {
+          dbx.itemValue.upsert({
+            where: {
+              itemId_fieldName_collectionId: {
+                itemId: item.id,
+                collectionId: item.collection.id,
+                fieldName: value.fieldName,
+              },
+            },
+            create: {
+              itemId: item.id,
+              ...value
+            },
+            update: {
+              itemId: item.id,
+              ...value
+            },
+          });
+        }
+      });
+    }
+
+    return await this.db.item.update({
+      where: { id },
+      data: {
+        name: dto.name,
+        tags: {
+          connectOrCreate: (dto.tags ?? []).map((tag) => ({
+            create: {
+              name: tag,
+            },
+            where: {
+              name: tag,
+            },
+          })),
+        },
+      },
     });
   }
 

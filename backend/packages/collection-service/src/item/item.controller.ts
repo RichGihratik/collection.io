@@ -3,7 +3,7 @@ import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { AuthGuard, TUserInfo, UserInfo } from '@collection.io/access-auth';
 import { ItemService } from './item.service';
 import { ItemSearchService } from './item-search.service';
-import { CreateItemDto, Item, SearchOptionsDto } from './dto';
+import { CreateItemDto, Item, SearchOptionsDto, UpdateItemDto } from './dto';
 
 @Controller('items')
 export class ItemController {
@@ -44,7 +44,7 @@ export class ItemController {
     @TypedParam('id')
     id: number,
     @TypedBody()
-    dto,
+    dto: UpdateItemDto,
     @UserInfo()
     info: TUserInfo,
   ): Promise<string> {
