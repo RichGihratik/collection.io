@@ -1,4 +1,5 @@
 import { FetchFunc } from "./include-token";
+import { QueryError } from './query-error';
 
 type Body = Record<string | number, unknown>;
 
@@ -24,7 +25,7 @@ function getFetcher(options?: QueryOptions) {
 
 export async function getResInfo<T>(res: Response): Promise<T> {
   const body = await res.json();
-  if (!res.ok) throw new Error(body.message ?? 'Unknown error');
+  if (!res.ok) throw new QueryError(body);
   return body;
 }
 
