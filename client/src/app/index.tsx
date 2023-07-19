@@ -1,6 +1,6 @@
 import { ThemeProvider, createTheme } from '@mui/material';
 import { QueryClientProvider } from 'react-query';
-import { Router } from '@/pages';
+import { Router } from './Router';
 import { queryClient } from '@/shared';
 
 import './index.css';

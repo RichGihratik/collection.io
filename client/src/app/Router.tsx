@@ -2,11 +2,12 @@ import { Typography } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { SigninForm, SignupForm } from '@/features/auth';
+import { Routes } from '@/entities/routes';
+import { SigninForm } from '@/features/auth';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: Routes.Landing,
     element: (
       <Typography variant="h3" fontWeight="bold">
         Landing
@@ -14,7 +15,13 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/users',
+    path: Routes.Auth,
+    element: (
+      <SigninForm redirectTo='/auth'/>
+    ),
+  },
+  {
+    path: Routes.Users,
     element: (
       <Typography variant="h3" fontWeight="bold">
         <AccountCircle />
@@ -23,15 +30,19 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/auth',
+    path: Routes.Collections,
     element: (
-      <SigninForm redirectTo='/auth'/>
+      <Typography variant="h3" fontWeight="bold">
+        Collections
+      </Typography>
     ),
   },
   {
-    path: '/collections',
+    path: Routes.Items,
     element: (
-      <SignupForm redirectTo='/collections'/>
+      <Typography variant="h3" fontWeight="bold">
+        Items
+      </Typography>
     ),
   },
 ]);
