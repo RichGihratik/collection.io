@@ -1,4 +1,5 @@
 export { del, post, patch, get, type QueryOptions, getResInfo } from './queries';
-export { fetchWithToken } from './include-token';
+export { fetchWithToken, type FetchFunc } from './include-token';
 export { queryClient } from './query-client';
-export { QueryStatus } from './enums';
+export { QueryStatus, UserRole, UserStatus } from './enums';
+export { QueryError } from './query-error';
