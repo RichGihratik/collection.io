@@ -19,6 +19,24 @@ export function useViewer() {
   });
 }
 
+export function makeTokenRequest<T>(fn: () => Promise<T>): () => Promise<T> {
+  return () => {
+    try {
+      return fn();
+    } catch (e) {
+      if (
+        e instanceof QueryError &&
+        (e.messageCode === AuthErrorCode.Blocked ||
+          e.messageCode === AuthErrorCode.Unauthorised)
+      ) {
+        queryClient.invalidateQueries([VIEWER_QUERY_KEY]);
+      }
+
+      throw e;
+    }
+  };
+}
+
 export function createTokenQuery<T>(
   key: unknown[],
   fn: (token?: string) => Promise<T>,
@@ -27,21 +45,7 @@ export function createTokenQuery<T>(
 
   return useQuery({
     queryKey: key,
-    queryFn: async () => {
-      try {
-        return fn(viewer.data?.access);
-      } catch (e) {
-        if (
-          e instanceof QueryError &&
-          (e.messageCode === AuthErrorCode.Blocked ||
-            e.messageCode === AuthErrorCode.Unauthorised)
-        ) {
-          await queryClient.invalidateQueries([VIEWER_QUERY_KEY]);
-        }
-
-        throw e;
-      }
-    },
+    queryFn: async () => makeTokenRequest(() => fn(viewer.data?.access)),
     enabled: !viewer.isLoading,
   });
 }
