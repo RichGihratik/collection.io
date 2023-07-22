@@ -2,9 +2,14 @@ import { TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import validator from 'validator';
 
-import { EmailField, SubmitButton, PasswordField, FormBody } from '@/shared';
-import { SignupProps } from '../api';
-import { useAuth, AuthType } from '../lib';
+import {
+  EmailField,
+  SubmitButton,
+  PasswordField,
+  FormBody,
+  QueryError,
+} from '@/shared';
+import { SignupProps, useSignup } from '@/features/auth';
 
 const NAME_LENGTH = 30;
 
@@ -13,10 +18,14 @@ interface Props {
 }
 
 export function SignupForm({ redirectTo }: Props) {
-  const { errorMessage, isLoading, mutate } = useAuth(
-    redirectTo,
-    AuthType.Signup,
-  );
+  const { isLoading, mutate, error } = useSignup(redirectTo);
+
+  const errorMessage =
+    error instanceof QueryError
+      ? error.message
+      : error === undefined
+      ? undefined
+      : 'Unknown Error';
 
   const {
     register,

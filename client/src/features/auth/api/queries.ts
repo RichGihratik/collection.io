@@ -1,5 +1,5 @@
 import { post, QueryOptions, getResInfo } from '@/shared';
-import { ViewerFetchResult, AUTH_URL } from '@/entities/user';
+import { ViewerFetchResult, AUTH_URL } from '@/entities/viewer';
 
 export type SigninProps = {
   email: string;

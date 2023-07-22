@@ -1,19 +1,28 @@
 import { useForm } from 'react-hook-form';
 import validator from 'validator';
 
-import { EmailField, SubmitButton, PasswordField, FormBody } from '@/shared';
-import { SigninProps } from '../api';
-import { useAuth, AuthType } from '../lib';
+import {
+  EmailField,
+  SubmitButton,
+  PasswordField,
+  FormBody,
+  QueryError,
+} from '@/shared';
+import { useSignin, type SigninProps } from '@/features/auth';
 
 interface Props {
   redirectTo: string;
 }
 
 export function SigninForm({ redirectTo }: Props) {
-  const { errorMessage, isLoading, mutate } = useAuth(
-    redirectTo,
-    AuthType.Signin,
-  );
+  const { error, isLoading, mutate } = useSignin(redirectTo);
+
+  const errorMessage =
+    error instanceof QueryError
+      ? error.message
+      : error === undefined
+      ? undefined
+      : 'Unknown Error';
 
   const {
     register,

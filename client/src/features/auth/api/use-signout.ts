@@ -1,7 +1,7 @@
 import { useMutation } from 'react-query';
 import { queryClient } from '@/shared';
-import { VIEWER_QUERY_KEY } from '@/entities/user';
-import { signout } from '../api';
+import { VIEWER_QUERY_KEY } from '@/entities/viewer';
+import { signout } from './queries';
 
 export function useSignout() {
   return useMutation({
