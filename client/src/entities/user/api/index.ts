@@ -1,10 +1,8 @@
-export { getUser, getUsers } from './get-user';
+export { getUser, getUsers, type SearchOptions } from './get-user';
 export {
   type AdminActionOptions,
   performAdminAction,
   deleteUsers,
 } from './admin-action';
-export {
-  type UpdateUserOpts,
-  updateUser
-} from './update-user'
+export { type UpdateUserOpts, updateUser } from './update-user';
+export { USER_API_URL, USER_QUERY_KEY } from './const';

@@ -2,9 +2,13 @@ import { getResInfo, get, fetchWithToken } from '@/shared';
 import { USER_API_URL } from './const';
 import { User } from '../user';
 
-export async function getUsers(searchBy: string, token?: string): Promise<User[]> {
+export type SearchOptions = {
+  searchBy?: string;
+};
+
+export async function getUsers(opts: SearchOptions, token?: string): Promise<User[]> {
   return getResInfo(await get(`${USER_API_URL}`, {
-    query: { searchBy: searchBy },
+    query: opts,
     fetch: token ? fetchWithToken(token) : fetch,
   }));
 }
