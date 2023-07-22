@@ -1,4 +1,4 @@
-export { getUser, getUsers, type SearchOptions } from './get-user';
+export { getUser, getUsers, type UsersSearchOptions } from './get-user';
 export {
   type AdminActionOptions,
   performAdminAction,
