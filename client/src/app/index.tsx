@@ -1,21 +1,15 @@
-import { ThemeProvider, createTheme } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import { QueryClientProvider } from 'react-query';
 import { Router } from './Router';
 import { queryClient } from '@/shared';
+import { theme } from '@/entities/theme';
+import { loadDayJS } from './dayjs-setup';
 
 import './index.css';
 
-const theme = createTheme({
-  components: {
-    MuiTab: {
-      styleOverrides: {
-        root: {
-          minHeight: 50,
-        },
-      },
-    },
-  },
-});
+export function setup() {
+  loadDayJS();
+}
 
 export default function App() {
   return (
