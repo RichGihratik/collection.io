@@ -2,6 +2,7 @@ export {
   useViewer,
   createTokenQuery,
   makeTokenRequest,
+  createTokenMutation,
   type ViewerFetchResult,
 } from './use-viewer';
 export { VIEWER_QUERY_KEY, AUTH_URL } from './const';
