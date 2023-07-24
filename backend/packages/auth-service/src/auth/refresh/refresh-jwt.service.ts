@@ -5,7 +5,7 @@ import {
   JwtPayload,
   isJwtPayload,
   TUserInfo,
-} from '@collection.io/access-jwt';
+} from '@collection.io/access-auth';
 
 @Injectable()
 export class RefreshJwtService {

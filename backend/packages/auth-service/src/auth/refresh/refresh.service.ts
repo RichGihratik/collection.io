@@ -10,7 +10,7 @@ import {
   JwtFields,
   UserInfoSelectQuery,
   TUserInfo,
-} from '@collection.io/access-jwt';
+} from '@collection.io/access-auth';
 import { DatabaseService, UserStatus } from '@collection.io/prisma';
 
 import { EXPIRE_IN, TOKEN_COOKIE_KEY } from './const';
