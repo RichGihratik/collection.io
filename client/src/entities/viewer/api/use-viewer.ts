@@ -14,7 +14,17 @@ export function useViewer() {
     queryKey: [VIEWER_QUERY_KEY],
     queryFn: async (): Promise<ViewerFetchResult | undefined> => {
       const res = await post(`${AUTH_URL}/auth/refresh`);
-      return getResInfo(res);
+      try {
+        return getResInfo(res);
+      } catch (e) {
+        if (
+          e instanceof QueryError &&
+          (e.messageCode === AuthErrorCode.Blocked ||
+            e.messageCode === AuthErrorCode.Unauthorised)
+        ) {
+          return undefined;
+        } else throw e;
+      }
     },
   });
 }
