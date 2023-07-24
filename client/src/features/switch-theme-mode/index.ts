@@ -1,2 +1,2 @@
-export { ThemeSwitchMenuItem } from './ThemeSwitchMenuItem';
+export { ThemeSwitchButton } from './ThemeSwitchButton';
 export { useThemeSwitch } from './use-theme-switch';

@@ -1,3 +1,4 @@
+import { ThemeSwitchButton } from '@/features/switch-theme-mode';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 
 export function HeaderBar() {
@@ -12,6 +13,7 @@ export function HeaderBar() {
         >
           Collection IO
         </Typography>
+        <ThemeSwitchButton />
       </Toolbar>
     </AppBar>
   );
