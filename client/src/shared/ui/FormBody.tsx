@@ -10,7 +10,7 @@ interface Props {
 export function FormBody({ onSubmit, errorMessage, children }: Props) {
   return (
     <form
-      className="flex flex-col p-10 max-w-md gap-5"
+      className="flex flex-col p-5 max-w-md gap-5 justify-center"
       onSubmit={onSubmit}
     >
       <ClosableErrorAlert message={errorMessage} />
