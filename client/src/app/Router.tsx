@@ -1,17 +1,18 @@
-import { Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { Routes } from '@/entities/routes';
-import { SigninForm } from '@/features/auth';
+import { SigninForm } from '@/widgets/auth-forms';
+import { ThemeSwitchMenuItem } from '@/features/switch-theme-mode';
 
 const router = createBrowserRouter([
   {
     path: Routes.Landing,
     element: (
-      <Typography variant="h3" fontWeight="bold">
-        Landing
-      </Typography>
+      <Paper className="flex flex-col flex-1 justify-center">
+        <ThemeSwitchMenuItem/>
+      </Paper>
     ),
   },
   {

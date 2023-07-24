@@ -1,6 +1,6 @@
 import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
 import { Logout } from '@mui/icons-material';
-import { useSignout } from '../lib';
+import { useSignout } from '../api';
 
 export function SignoutMenuItem() {
   const { mutateAsync } = useSignout();
