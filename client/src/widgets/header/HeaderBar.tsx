@@ -1,5 +1,6 @@
 import { ThemeSwitchButton } from '@/features/switch-theme-mode';
 import { AppBar, Toolbar, Typography } from '@mui/material';
+import { ViewerMenu } from './ViewerMenu';
 
 export function HeaderBar() {
   return (
@@ -14,6 +15,7 @@ export function HeaderBar() {
           Collection IO
         </Typography>
         <ThemeSwitchButton />
+        <ViewerMenu />
       </Toolbar>
     </AppBar>
   );
