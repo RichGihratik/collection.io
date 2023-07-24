@@ -14,6 +14,7 @@ export const UserInfoSelectQuery = {
   status: true,
   createdAt: true,
   lastLogin: true,
+  avatarUrl: true,
 } as const;
 
 @Injectable()
