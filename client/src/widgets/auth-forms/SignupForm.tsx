@@ -1,5 +1,6 @@
-import { TextField } from '@mui/material';
+import { TextField, Typography, Link } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { Link as RouterLink } from 'react-router-dom';
 import validator from 'validator';
 
 import {
@@ -10,6 +11,7 @@ import {
   QueryError,
 } from '@/shared';
 import { SignupProps, useSignup } from '@/features/auth';
+import { AuthRoutes, getAuthSubroute } from './route-paths';
 
 const NAME_LENGTH = 30;
 
@@ -23,7 +25,7 @@ export function SignupForm({ redirectTo }: Props) {
   const errorMessage =
     error instanceof QueryError
       ? error.message
-      : error === undefined
+      : error === null || error === undefined
       ? undefined
       : 'Unknown Error';
 
@@ -73,6 +75,12 @@ export function SignupForm({ redirectTo }: Props) {
         error={errors.password?.message}
       />
       <SubmitButton disabled={!isValid} loading={isLoading} text="Sign up" />
+      <Typography sx={{ my: 4 }}>
+        Already have an account?{' '}
+        <Link component={RouterLink} to={getAuthSubroute(AuthRoutes.Signin)}>
+          Click here to login
+        </Link>
+      </Typography>
     </FormBody>
   );
 }

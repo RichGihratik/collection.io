@@ -3,23 +3,20 @@ import { AccountCircle } from '@mui/icons-material';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { Routes } from '@/entities/routes';
-import { SigninForm } from '@/widgets/auth-forms';
-import { ThemeSwitchMenuItem } from '@/features/switch-theme-mode';
+import { AuthPage, authSubroutes } from '@/pages/auth';
 
 const router = createBrowserRouter([
   {
     path: Routes.Landing,
     element: (
       <Paper className="flex flex-col flex-1 justify-center">
-        <ThemeSwitchMenuItem/>
       </Paper>
     ),
   },
   {
     path: Routes.Auth,
-    element: (
-      <SigninForm redirectTo='/auth'/>
-    ),
+    element: <AuthPage/>,
+    children: authSubroutes,
   },
   {
     path: Routes.Users,

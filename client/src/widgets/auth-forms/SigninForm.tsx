@@ -1,5 +1,7 @@
 import { useForm } from 'react-hook-form';
 import validator from 'validator';
+import { Typography, Link } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 import {
   EmailField,
@@ -9,6 +11,7 @@ import {
   QueryError,
 } from '@/shared';
 import { useSignin, type SigninProps } from '@/features/auth';
+import { AuthRoutes, getAuthSubroute } from './route-paths';
 
 interface Props {
   redirectTo: string;
@@ -20,7 +23,7 @@ export function SigninForm({ redirectTo }: Props) {
   const errorMessage =
     error instanceof QueryError
       ? error.message
-      : error === undefined
+      : error === null || error === undefined
       ? undefined
       : 'Unknown Error';
 
@@ -55,6 +58,14 @@ export function SigninForm({ redirectTo }: Props) {
         error={errors.password?.message}
       />
       <SubmitButton disabled={!isValid} loading={isLoading} text="Sign in" />
+      <Typography sx={{ my: 4 }}>
+        Don't have an account?{' '}
+        <Typography color="InfoText" component="span">
+          <Link component={RouterLink} to={getAuthSubroute(AuthRoutes.Signup)}>
+            Create a new one.
+          </Link>
+        </Typography>
+      </Typography>
     </FormBody>
   );
 }

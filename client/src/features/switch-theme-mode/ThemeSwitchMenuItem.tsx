@@ -10,7 +10,7 @@ export function ThemeSwitchMenuItem() {
   return (
     <MenuItem onClick={switchMode}>
       <ThemeModeIcon/>
-      Mode: {mode}
+      Theme: {mode}
     </MenuItem>
   );
 }

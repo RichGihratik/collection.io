@@ -4,6 +4,7 @@ import { Router } from './Router';
 import { queryClient } from '@/shared';
 import { ThemeModeProvider } from '@/entities/theme-mode';
 import { ThemeProvider } from '@/entities/theme';
+import { MainLayout } from '@/pages/MainLayout';
 import { loadDayJS } from './dayjs-setup';
 
 import './index.css';
@@ -17,8 +18,10 @@ export default function App() {
     <ThemeModeProvider>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
-          <CssBaseline />
-          <Router />
+          <MainLayout>
+            <CssBaseline />
+            <Router />
+          </MainLayout>
         </QueryClientProvider>
       </ThemeProvider>
     </ThemeModeProvider>
