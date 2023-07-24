@@ -13,6 +13,7 @@ interface UserInfo {
    */
   name: string;
   role: string;
+  avatarUrl?: string;
   status: string;
   /**
    * @format date-time

@@ -57,7 +57,10 @@ export class AuthService {
 
     return {
       access,
-      user,
+      user: {
+        ...user,
+        avatarUrl: user.avatarUrl ?? undefined,
+      },
     };
   }
 
@@ -97,7 +100,10 @@ export class AuthService {
 
     return {
       access,
-      user,
+      user: {
+        ...user,
+        avatarUrl: user.avatarUrl ?? undefined,
+      },
     };
   }
 
@@ -114,7 +120,10 @@ export class AuthService {
 
     return {
       access,
-      user,
+      user: {
+        ...user,
+        avatarUrl: user.avatarUrl ?? undefined,
+      },
     };
   }
 
