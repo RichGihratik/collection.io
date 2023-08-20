@@ -5,7 +5,7 @@
 	},
 	"husky": {
     "hooks": {
-      "pre-commit": "npx validate-branch-name"
+      "pre-commit": "npx validate-branch-name && sh hooks/pre-commit"
     }
   },
   "validate-branch-name": {
