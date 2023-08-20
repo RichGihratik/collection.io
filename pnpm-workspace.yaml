@@ -1,0 +1,5 @@
+packages:
+  - backend/database-setup
+  - backend/packages/*
+  - backend/services/*
+  - client
