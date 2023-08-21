@@ -8,8 +8,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --report-unused-disable-directives --max-warnings 0 --fix",
+		"*.tsx": "eslint --report-unused-disable-directives --max-warnings 0 --fix"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
