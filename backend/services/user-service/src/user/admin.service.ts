@@ -12,7 +12,7 @@ export class AdminService {
     await this.promoteUsers(dto.promote);
     await this.unblockUsers(dto.unblock);
 
-    return 'Succesfully update table'
+    return 'Succesfully update table';
   }
 
   async blockUsers(ids: number[]) {

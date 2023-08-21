@@ -21,10 +21,7 @@ export async function checkCollectionPermissions(
   collectionId: number,
   ownerId?: number | null,
 ): Promise<CollectionType> {
-  if (!info)
-    throw new Error(
-      'CRUD method call without authorization',
-    );
+  if (!info) throw new Error('CRUD method call without authorization');
   if (ownerId && info.id !== ownerId && info.role !== UserRole.ADMIN) {
     throw new CollectionForbidden();
   } else if (ownerId) {

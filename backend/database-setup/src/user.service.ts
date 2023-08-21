@@ -11,7 +11,10 @@ const fileName = 'users.json';
 
 @Injectable()
 export class UserService implements Service {
-  constructor(private db: DatabaseService, private dir: DirectoryService) {}
+  constructor(
+    private db: DatabaseService,
+    private dir: DirectoryService,
+  ) {}
 
   private createPassword() {
     return randomBytes(passwordLength).toString('hex');

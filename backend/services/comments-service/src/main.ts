@@ -18,6 +18,7 @@ async function bootstrap() {
     credentials: true,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await app.register(helmet as any);
   await app.listen(3000, 'RENDER' in process.env ? `0.0.0.0` : `localhost`);
 }

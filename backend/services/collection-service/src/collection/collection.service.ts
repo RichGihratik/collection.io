@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Collection, DatabaseService, UserRole } from '@collection.io/prisma';
 import { TUserInfo } from '@collection.io/access-auth';
 import { sanitize } from 'isomorphic-dompurify';
@@ -122,7 +122,7 @@ export class CollectionService {
 
   async rate(id: number, dto: RateDto, user: TUserInfo) {
     const collection = await this.db.collection.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!collection) throw new CollectionNotFound();

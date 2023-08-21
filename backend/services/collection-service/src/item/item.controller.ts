@@ -3,7 +3,13 @@ import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { AuthGuard, TUserInfo, UserInfo } from '@collection.io/access-auth';
 import { ItemService } from './item.service';
 import { ItemSearchService } from './item-search.service';
-import { CreateItemDto, Item, LikeDto, SearchOptionsDto, UpdateItemDto } from './dto';
+import {
+  CreateItemDto,
+  Item,
+  LikeDto,
+  SearchOptionsDto,
+  UpdateItemDto,
+} from './dto';
 
 @Controller('items')
 export class ItemController {
@@ -15,7 +21,7 @@ export class ItemController {
   @TypedRoute.Get()
   getItems(
     @TypedQuery()
-    dto: SearchOptionsDto
+    dto: SearchOptionsDto,
   ): Promise<Item[]> {
     return this.search.search(dto);
   }

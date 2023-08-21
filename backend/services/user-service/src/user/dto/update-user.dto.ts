@@ -3,7 +3,7 @@ export interface UpdateUserDto {
    * @format url
    */
   avatarUrl?: string | null;
-  
+
   name?: string;
 
   // TODO Make email validation
@@ -16,10 +16,10 @@ export interface UpdateUserDto {
     /**
      * @minLength 1
      */
-    new: string,
+    new: string;
     /**
      * @minLength 1
      */
-    old: string,
-  }
+    old: string;
+  };
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TUserInfo } from '@collection.io/access-auth';
 import { DatabaseService, Item } from '@collection.io/prisma';
 import { checkCollectionPermissions } from '@/collection';
@@ -19,8 +19,7 @@ export class ItemService {
   ) {
     return fields.flatMap((field) => {
       if (obj[field.name] === undefined) return [];
-      if (!isValidField(obj[field.name], field.type))
-        throw new InvalidFields();
+      if (!isValidField(obj[field.name], field.type)) throw new InvalidFields();
       return {
         collectionId,
         fieldName: field.name,
@@ -83,11 +82,11 @@ export class ItemService {
             },
             create: {
               itemId: item.id,
-              ...value
+              ...value,
             },
             update: {
               itemId: item.id,
-              ...value
+              ...value,
             },
           });
         }
@@ -114,7 +113,7 @@ export class ItemService {
 
   async like(id: number, dto: LikeDto, user: TUserInfo) {
     const item = await this.db.item.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!item) throw new ItemNotFound();

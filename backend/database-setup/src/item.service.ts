@@ -13,7 +13,7 @@ export class ItemService implements Service {
 
   private createFieldValues(fields: FieldConfig[], faker: Faker) {
     return fields.map((field) => {
-      let value: string = '';
+      let value = '';
 
       switch (field.type) {
         case FieldType.BOOL:
@@ -89,7 +89,9 @@ export class ItemService implements Service {
       return this.createWord(faker);
     });
 
-    const oldTags = !isTagReset ? (await this.db.itemTag.findMany()).map((tag) => tag.name) : [];
+    const oldTags = !isTagReset
+      ? (await this.db.itemTag.findMany()).map((tag) => tag.name)
+      : [];
 
     const data = Array.from(new Array(count), () => {
       const faker = locale();

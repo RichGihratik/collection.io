@@ -106,10 +106,11 @@ export class CollectionSearchService {
         },
       });
 
-      if (!collection) throw new NotFoundException({
-        message: 'Collection was not found',
-        messageCode: 'collection.notFound'
-      });
+      if (!collection)
+        throw new NotFoundException({
+          message: 'Collection was not found',
+          messageCode: 'collection.notFound',
+        });
 
       const theme = collection.themeName ?? 'Other';
       const itemsCount = collection._count.items;
@@ -125,7 +126,7 @@ export class CollectionSearchService {
       });
 
       if (user) {
-       const viewerRating = await dbx.collectionRating.findUnique({
+        const viewerRating = await dbx.collectionRating.findUnique({
           where: {
             ownerId_collectionId: {
               ownerId: user.id,
