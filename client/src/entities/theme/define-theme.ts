@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react';
 export interface Themes {
   muiTheme: MuiOptions;
   datatableTheme: string | null;
-};
+}
 
 export function useDefineTheme() {
   const [options, setOptions] = useState<Themes>({
@@ -23,15 +23,16 @@ export function useDefineTheme() {
   const datatableTheme = options.datatableTheme;
 
   function updateOptions(opts: Partial<Themes>) {
-    setOptions({
-      muiTheme: opts.muiTheme
-        ? deepmerge(options.muiTheme, opts.muiTheme)
-        : options.muiTheme,
-      datatableTheme:
-        opts.datatableTheme === undefined
-          ? options.datatableTheme
-          : opts.datatableTheme,
-    });
+    if (opts.muiTheme || opts.datatableTheme)
+      setOptions({
+        muiTheme: opts.muiTheme
+          ? deepmerge(options.muiTheme, opts.muiTheme)
+          : options.muiTheme,
+        datatableTheme:
+          opts.datatableTheme === undefined
+            ? options.datatableTheme
+            : opts.datatableTheme,
+      });
   }
 
   return {

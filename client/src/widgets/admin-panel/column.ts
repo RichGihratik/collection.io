@@ -30,5 +30,5 @@ export const columns = [
   {
     name: 'Role',
     selector: (item) => item.role,
-  }
+  },
 ] satisfies TableColumn<User>[];

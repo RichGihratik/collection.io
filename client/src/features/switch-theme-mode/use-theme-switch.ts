@@ -33,7 +33,7 @@ export function useThemeSwitch() {
       datatableTheme:
         datatableTheme !== selectedMode ? selectedMode : undefined,
     });
-  }, [selectedMode]);
+  }, [selectedMode, muiTheme.palette.mode, datatableTheme, updateOptions]);
 
   function switchMode() {
     const nextIndex = index + 1 >= MODE_RING.length ? 0 : index + 1;

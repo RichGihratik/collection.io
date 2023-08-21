@@ -1,9 +1,9 @@
 import { UpdateUserOpts, updateUser } from '@/entities/user';
-import { createTokenMutation } from '@/entities/viewer';
+import { useTokenMutation } from '@/entities/viewer';
 import { UserRole } from '@/shared';
 
 export function useUpdateUser() {
-  return createTokenMutation(
+  return useTokenMutation(
     async (viewer, opts: UpdateUserOpts & { id?: number }) => {
       if (
         opts.id &&

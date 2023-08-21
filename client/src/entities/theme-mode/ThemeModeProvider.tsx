@@ -7,9 +7,15 @@ interface ThemeModeValue {
   setMode: (mode: ThemeMode) => void;
 }
 
-export const ThemeModeContext = createContext<ThemeModeValue | undefined>(undefined);
+export const ThemeModeContext = createContext<ThemeModeValue | undefined>(
+  undefined,
+);
 
-export function ThemeModeProvider({ children }: { children: ReactNode[] | ReactNode }) {
+export function ThemeModeProvider({
+  children,
+}: {
+  children: ReactNode[] | ReactNode;
+}) {
   const [mode, setModeState] = useState(loadMode() ?? ThemeMode.System);
 
   function setMode(mode: ThemeMode) {
@@ -18,7 +24,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode[] | ReactN
   }
 
   return (
-    <ThemeModeContext.Provider value={{mode, setMode}}>
+    <ThemeModeContext.Provider value={{ mode, setMode }}>
       {children}
     </ThemeModeContext.Provider>
   );

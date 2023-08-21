@@ -1,4 +1,4 @@
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from '@mui/material';
 
 interface Props {
   disabled: boolean;
@@ -12,11 +12,7 @@ export function SubmitButton({ disabled, loading, text }: Props) {
       sx={{ mt: 5 }}
       disabled={disabled}
       startIcon={
-        loading ? (
-          <CircularProgress sx={{ color: 'white' }} size={24} />
-        ) : (
-          <></>
-        )
+        loading ? <CircularProgress sx={{ color: 'white' }} size={24} /> : <></>
       }
       variant="contained"
       type="submit"

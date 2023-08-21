@@ -7,7 +7,7 @@ export function ThemeSwitchButton() {
 
   return (
     <IconButton onClick={switchMode}>
-      <ThemeModeIcon/>
+      <ThemeModeIcon />
     </IconButton>
   );
 }

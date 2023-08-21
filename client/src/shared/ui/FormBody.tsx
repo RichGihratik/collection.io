@@ -1,10 +1,10 @@
-import { FormEvent, ReactNode } from "react";
+import { FormEvent, ReactNode } from 'react';
 import { ClosableErrorAlert } from '@/shared';
 
 interface Props {
   onSubmit: (data: FormEvent) => void;
   errorMessage?: string;
-  children: ReactNode[] | ReactNode
+  children: ReactNode[] | ReactNode;
 }
 
 export function FormBody({ onSubmit, errorMessage, children }: Props) {
@@ -16,5 +16,5 @@ export function FormBody({ onSubmit, errorMessage, children }: Props) {
       <ClosableErrorAlert message={errorMessage} />
       {children}
     </form>
-  )
+  );
 }

@@ -12,7 +12,7 @@ module.exports = {
   plugins: [
     '@typescript-eslint/eslint-plugin', 
     'react-refresh',
-    'plugin:prettier/recommended',
+    'prettier',
   ],
   rules: {
     'react-refresh/only-export-components': 'warn',
