@@ -4,7 +4,7 @@ import { ThemeMode, useThemeMode } from "@/entities/theme-mode";
 export function ThemeModeIcon() {
   const { mode } = useThemeMode();
 
-  const className = 'mx-3 text-white';
+  const className = 'text-white';
 
   switch(mode) {
     case ThemeMode.Dark:
