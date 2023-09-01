@@ -17,4 +17,6 @@ export interface CreateItemDto extends ObjectWithName, ItemOptions {
   collectionId: number;
 }
 
-export interface UpdateItemDto extends Partial<ItemOptions>, Partial<ObjectWithName> {}
+export interface UpdateItemDto
+  extends Partial<ItemOptions>,
+    Partial<ObjectWithName> {}

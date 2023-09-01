@@ -1,7 +1,4 @@
-export {
-  SearchOptionsDto,
-  OrderByField,
-} from './search-options.dto';
+export { SearchOptionsDto, OrderByField } from './search-options.dto';
 
 export { CreateCollectionDto } from './create-collection.dto';
 export { UpdateCollectionDto } from './update-collection.dto';

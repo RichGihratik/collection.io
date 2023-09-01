@@ -1,3 +1,3 @@
 export interface LikeDto {
-  like: boolean,
+  like: boolean;
 }
