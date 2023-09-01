@@ -11,6 +11,10 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "lint-staged": {
+    "*.ts": "eslint --report-unused-disable-directives --fix",
+    "*.tsx": "eslint --report-unused-disable-directives --fix"
+  },
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
