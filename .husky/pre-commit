@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx validate-branch-name
+sh hooks/branch-validator.sh
+pnpm pre-commit
