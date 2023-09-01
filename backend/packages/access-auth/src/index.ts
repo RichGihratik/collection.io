@@ -13,3 +13,4 @@ export {
   hashPassword,
   hashPasswordSync,
 } from './password-utils';
+export { AuthBlocked, AuthForbidden, AuthUnauthorised } from './exceptions';
