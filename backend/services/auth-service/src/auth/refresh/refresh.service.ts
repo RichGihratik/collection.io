@@ -60,9 +60,9 @@ export class RefreshService {
     const token = this.extractToken(req);
     if (!token) {
       this.logger.log('Token was not found.');
-      throw new UnauthorizedException({ 
+      throw new UnauthorizedException({
         message: 'User unauthorized',
-        messageCode: 'auth.unauthorised' 
+        messageCode: 'auth.unauthorised',
       });
     }
 
@@ -73,9 +73,9 @@ export class RefreshService {
         'Token has invalid type and/or signature. Clearing cookie...',
       );
       this.clearToken(res);
-      throw new UnauthorizedException({ 
+      throw new UnauthorizedException({
         message: 'Token invalid',
-        messageCode: 'auth.unauthorised' 
+        messageCode: 'auth.unauthorised',
       });
     }
 
@@ -93,17 +93,17 @@ export class RefreshService {
       );
       this.clearToken(res);
       await this.history.invalidateAll(payload[JwtFields.Id]);
-      throw new UnauthorizedException({ 
+      throw new UnauthorizedException({
         message: 'User does not exist',
-        messageCode: 'auth.unauthorised' 
+        messageCode: 'auth.unauthorised',
       });
     } else if (user.status === UserStatus.BLOCKED) {
       this.logger.log(`User "${user.email}" is blocked. Clearing cookie...`);
       this.clearToken(res);
       await this.history.invalidateAll(user.id);
-      throw new ForbiddenException({ 
+      throw new ForbiddenException({
         message: 'User is blocked',
-        messageCode: 'auth.blocked' 
+        messageCode: 'auth.blocked',
       });
     }
 
@@ -129,9 +129,9 @@ export class RefreshService {
       this.logger.warn(
         `User ${user.email} attempted to refresh with used token. All tokens has been invalidated`,
       );
-      throw new ForbiddenException({ 
+      throw new ForbiddenException({
         message: 'Attempt to refresh with used token',
-        messageCode: 'auth.usedRefresh' 
+        messageCode: 'auth.usedRefresh',
       });
     }
     this.setCookie(newToken, res);
