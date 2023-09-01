@@ -7,7 +7,7 @@ export function ThemeSwitchButton() {
 
   return (
     <IconButton sx={{ mx: 1 }} onClick={switchMode}>
-      <ThemeModeIcon/>
+      <ThemeModeIcon />
     </IconButton>
   );
 }

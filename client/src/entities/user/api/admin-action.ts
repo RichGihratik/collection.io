@@ -24,7 +24,7 @@ export async function deleteUsers(users: number[], token: string) {
   return getResInfo(
     await del(`${USER_API_URL}/admin`, {
       body: {
-        users
+        users,
       },
       fetch: fetchWithToken(token),
     }),

@@ -5,13 +5,8 @@ import { queryClient } from '@/shared';
 import { ThemeModeProvider } from '@/entities/theme-mode';
 import { ThemeProvider } from '@/entities/theme';
 import { MainLayout } from '@/pages/MainLayout';
-import { loadDayJS } from './dayjs-setup';
 
 import './index.css';
-
-export function setup() {
-  loadDayJS();
-}
 
 export default function App() {
   return (

@@ -8,14 +8,11 @@ import { AuthPage, authSubroutes } from '@/pages/auth';
 const router = createBrowserRouter([
   {
     path: Routes.Landing,
-    element: (
-      <Paper className="flex flex-col flex-1 justify-center">
-      </Paper>
-    ),
+    element: <Paper className="flex flex-col flex-1 justify-center"></Paper>,
   },
   {
     path: Routes.Auth,
-    element: <AuthPage/>,
+    element: <AuthPage />,
     children: authSubroutes,
   },
   {
