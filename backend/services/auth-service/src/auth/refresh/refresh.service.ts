@@ -1,15 +1,12 @@
-import {
-  ForbiddenException,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { CookieSerializeOptions } from '@fastify/cookie';
 import {
   JwtFields,
   UserInfoSelectQuery,
   TUserInfo,
+  AuthBlocked,
+  AuthUnauthorised,
 } from '@collection.io/access-auth';
 import { DatabaseService, UserStatus } from '@collection.io/prisma';
 
@@ -60,10 +57,7 @@ export class RefreshService {
     const token = this.extractToken(req);
     if (!token) {
       this.logger.log('Token was not found.');
-      throw new UnauthorizedException({ 
-        message: 'User unauthorized',
-        messageCode: 'auth.unauthorised' 
-      });
+      throw new AuthUnauthorised();
     }
 
     this.logger.log('Found token in cookie. Verifying token sign...');
@@ -73,10 +67,7 @@ export class RefreshService {
         'Token has invalid type and/or signature. Clearing cookie...',
       );
       this.clearToken(res);
-      throw new UnauthorizedException({ 
-        message: 'Token invalid',
-        messageCode: 'auth.unauthorised' 
-      });
+      throw new AuthUnauthorised('Invalid token');
     }
 
     this.logger.log('Token sign is valid. Checking db info...');
@@ -93,18 +84,12 @@ export class RefreshService {
       );
       this.clearToken(res);
       await this.history.invalidateAll(payload[JwtFields.Id]);
-      throw new UnauthorizedException({ 
-        message: 'User does not exist',
-        messageCode: 'auth.unauthorised' 
-      });
+      throw new AuthUnauthorised('User does not exist');
     } else if (user.status === UserStatus.BLOCKED) {
       this.logger.log(`User "${user.email}" is blocked. Clearing cookie...`);
       this.clearToken(res);
       await this.history.invalidateAll(user.id);
-      throw new ForbiddenException({ 
-        message: 'User is blocked',
-        messageCode: 'auth.blocked' 
-      });
+      throw new AuthBlocked();
     }
 
     this.logger.log(`Token of "${user.email}" is valid`);
@@ -129,10 +114,7 @@ export class RefreshService {
       this.logger.warn(
         `User ${user.email} attempted to refresh with used token. All tokens has been invalidated`,
       );
-      throw new ForbiddenException({ 
-        message: 'Attempt to refresh with used token',
-        messageCode: 'auth.usedRefresh' 
-      });
+      throw new AuthUnauthorised('Attempt to refresh with used token');
     }
     this.setCookie(newToken, res);
     this.logger.log(`User ${user.email} updated refresh token`);

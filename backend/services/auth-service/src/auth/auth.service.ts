@@ -1,16 +1,17 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { sanitize } from 'isomorphic-dompurify';
-import { CreateTokenService, hashPassword, comparePasswords } from '@collection.io/access-auth';
+import {
+  CreateTokenService,
+  hashPassword,
+  comparePasswords,
+  AuthBlocked,
+} from '@collection.io/access-auth';
 import { DatabaseService, User, UserStatus } from '@collection.io/prisma';
 
 import { SigninDto, SignupDto, TokenDto } from './dto';
 import { RefreshService } from './refresh';
+import { IncorrectCredentials, AccountExists } from './exceptions';
 
 @Injectable()
 export class AuthService {
@@ -31,10 +32,7 @@ export class AuthService {
 
     if (!user) {
       this.logger.log(`Email "${email}" not found when signing in`);
-      throw new BadRequestException({
-        message: 'Incorrect email and/or password',
-        messageCode: 'auth.incorrectCredentials',
-      });
+      throw new IncorrectCredentials();
     }
 
     this.checkUserStatus(user);
@@ -43,10 +41,7 @@ export class AuthService {
 
     if (!compareResult) {
       this.logger.log(`Invalid password for "${user.email}"`);
-      throw new BadRequestException({
-        message: 'Incorrect email and/or password',
-        messageCode: 'auth.incorrectCredentials',
-      });
+      throw new IncorrectCredentials();
     }
 
     await this.updateLogin(user.id);
@@ -74,10 +69,7 @@ export class AuthService {
 
       if (user) {
         this.logger.log(`Attempt to sign up with existing email: "${email}"`);
-        throw new BadRequestException({
-          message: 'User with this email already exists',
-          messageCode: 'auth.accountExists',
-        });
+        throw new AccountExists();
       }
 
       const hash = await hashPassword(password);
@@ -130,10 +122,7 @@ export class AuthService {
   private checkUserStatus(user: User) {
     if (user.status === UserStatus.BLOCKED) {
       this.logger.log(`Blocked user "${user.email}" attempted to log in`);
-      throw new ForbiddenException({
-        message: 'Account is blocked',
-        messageCode: 'auth.blocked',
-      });
+      throw new AuthBlocked();
     }
   }
 
