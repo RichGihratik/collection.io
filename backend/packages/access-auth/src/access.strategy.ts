@@ -1,9 +1,4 @@
-import {
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole, UserStatus } from '@collection.io/prisma';
 
@@ -12,6 +7,7 @@ import { ROLES_METAKEY } from './role.decorator';
 import { UserInfoService } from './user-info/user-info.service';
 import { PlatformRequest } from './types';
 import { Strategy } from './strategy';
+import { AuthBlocked, AuthForbidden, AuthUnauthorised } from './exceptions';
 
 export const STRATEGY_KEY = 'access-jwt';
 
@@ -28,37 +24,18 @@ export class AccessStrategy extends Strategy {
   async validate(req: PlatformRequest, ctx: ExecutionContext) {
     const role = this.reflector.get<UserRole>(ROLES_METAKEY, ctx.getHandler());
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token)
-      throw new UnauthorizedException({
-        message: 'Unauthorized',
-        messageCode: 'auth.unauthorised',
-      });
+    if (!token) throw new AuthUnauthorised();
 
     const info = this.jwt.verifyToken(token);
-    if (!info)
-      throw new UnauthorizedException({
-        message: 'Unauthorized',
-        messageCode: 'auth.unauthorised',
-      });
+    if (!info) throw new AuthUnauthorised();
 
     const user = await this.db.getUser(info[JwtFields.Id]);
-    if (!user)
-      throw new UnauthorizedException({
-        message: 'User not found',
-        messageCode: 'auth.unauthorised',
-      });
+    if (!user) throw new AuthUnauthorised('User was not found');
 
-    if (user.status === UserStatus.BLOCKED)
-      throw new ForbiddenException({
-        message: 'User is blocked',
-        messageCode: 'auth.blocked',
-      });
+    if (user.status === UserStatus.BLOCKED) throw new AuthBlocked();
 
     if (role === UserRole.ADMIN && user.role !== role)
-      throw new ForbiddenException({
-        message: 'Forbidden',
-        messageCode: 'auth.forbidden',
-      });
+      throw new AuthForbidden();
 
     return user;
   }
