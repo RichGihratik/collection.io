@@ -8,7 +8,7 @@ export function ClosableErrorAlert(props: { message: string | undefined }) {
 
   useEffect(() => {
     setOpen(!isEmpty);
-  }, [props.message])
+  }, [isEmpty]);
 
   return (
     <Collapse in={open && !isEmpty}>

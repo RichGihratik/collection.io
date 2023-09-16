@@ -15,7 +15,11 @@ export function ViewerMenu() {
           <ViewerAvatar />
         </IconButton>
       </Tooltip>
-      <Menu anchorEl={button.current} open={isOpen && data !== undefined} onClose={() => setOpen(false)}>
+      <Menu
+        anchorEl={button.current}
+        open={isOpen && data !== undefined}
+        onClose={() => setOpen(false)}
+      >
         {data ? <SignoutMenuItem /> : <></>}
       </Menu>
     </>

@@ -8,6 +8,6 @@ export class TagController {
 
   @TypedRoute.Get()
   async getAll(): Promise<string[]> {
-    return (await this.db.itemTag.findMany()).map(tag => tag.name); 
+    return (await this.db.itemTag.findMany()).map((tag) => tag.name);
   }
 }

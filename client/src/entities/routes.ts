@@ -4,5 +4,5 @@ export enum Routes {
   Admin = 'admin',
   Users = 'users',
   Collections = 'collections',
-  Items = 'items'
+  Items = 'items',
 }

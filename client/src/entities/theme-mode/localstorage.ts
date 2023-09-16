@@ -3,7 +3,10 @@ import { ThemeMode } from './mode';
 const THEME_STORAGE_KEY = 'THEME_MODE';
 
 function isThemeMode(item: unknown): item is ThemeMode {
-  return typeof item === 'string' && Object.values(ThemeMode).includes(item as ThemeMode);
+  return (
+    typeof item === 'string' &&
+    Object.values(ThemeMode).includes(item as ThemeMode)
+  );
 }
 
 export function loadMode() {

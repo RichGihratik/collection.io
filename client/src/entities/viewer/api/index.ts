@@ -1,8 +1,8 @@
 export {
   useViewer,
-  createTokenQuery,
+  useTokenQuery,
   makeTokenRequest,
-  createTokenMutation,
+  useTokenMutation,
   type ViewerFetchResult,
 } from './use-viewer';
 export { VIEWER_QUERY_KEY, AUTH_URL } from './const';

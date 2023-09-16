@@ -3,7 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TUserInfo, hashPassword, comparePasswords } from '@collection.io/access-auth';
+import {
+  TUserInfo,
+  hashPassword,
+  comparePasswords,
+} from '@collection.io/access-auth';
 import { DatabaseService, User, UserRole } from '@collection.io/prisma';
 import { SearchUserDto, UpdateUserDto, UserDto, UserWithHash } from './dto';
 
@@ -28,7 +32,7 @@ export class UserService {
   async update(id: number, dto: UpdateUserDto, info: TUserInfo) {
     const user = await this.get(id, info, true);
 
-    if (!user.hash) throw new Error('Hash is required to process!'); 
+    if (!user.hash) throw new Error('Hash is required to process!');
 
     if (info.id !== id && info.role !== UserRole.ADMIN)
       throw new ForbiddenException({
@@ -44,7 +48,7 @@ export class UserService {
 
     if (dto.avatarUrl || dto.avatarUrl === null)
       updateData.avatarUrl = dto.avatarUrl;
-    if (dto.password && await comparePasswords(dto.password.old, user.hash)) {
+    if (dto.password && (await comparePasswords(dto.password.old, user.hash))) {
       updateData.hash = await hashPassword(dto.password.new);
     }
 

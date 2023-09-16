@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from "@/shared";
+import { UserRole, UserStatus } from '@/shared';
 
 export interface Viewer {
   id: number;

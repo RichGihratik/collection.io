@@ -84,8 +84,8 @@ export class CollectionService implements Service {
             createMany: {
               data: item.fields,
               skipDuplicates: true,
-            }
-          }
+            },
+          },
         },
       });
       progressUpdate(++progress);

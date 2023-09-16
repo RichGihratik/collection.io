@@ -1,4 +1,8 @@
-import { USER_QUERY_KEY, type UsersSearchOptions, getUsers } from '@/entities/user';
+import {
+  USER_QUERY_KEY,
+  type UsersSearchOptions,
+  getUsers,
+} from '@/entities/user';
 import { createTokenQuery } from '@/entities/viewer';
 
 export function useUsers(opts: UsersSearchOptions) {

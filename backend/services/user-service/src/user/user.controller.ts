@@ -45,7 +45,7 @@ export class UserController {
     @TypedBody()
     dto: UpdateUserDto,
   ) {
-    await this.user.update(id, dto, info); 
+    await this.user.update(id, dto, info);
     return 'Updated successfully';
   }
 }

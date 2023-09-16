@@ -27,8 +27,6 @@ export interface UserDto {
    * @format url
    */
   avatarUrl?: string;
-
-  
 }
 
 export interface UserWithHash extends UserDto {

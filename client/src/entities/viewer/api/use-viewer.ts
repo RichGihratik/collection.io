@@ -47,7 +47,7 @@ export function makeTokenRequest<T>(fn: () => Promise<T>): () => Promise<T> {
   };
 }
 
-export function createTokenQuery<T>(
+export function useTokenQuery<T>(
   key: unknown[],
   fn: (token?: string) => Promise<T>,
 ) {
@@ -60,7 +60,7 @@ export function createTokenQuery<T>(
   });
 }
 
-export function createTokenMutation<T>(
+export function useTokenMutation<T>(
   fn: (viewer: ViewerFetchResult, params: T) => Promise<unknown>,
 ) {
   const viewer = useViewer();

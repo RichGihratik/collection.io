@@ -1,8 +1,8 @@
-import { Routes } from "@/entities/routes";
+import { Routes } from '@/entities/routes';
 
 export enum AuthRoutes {
   Signin = 'signin',
-  Signup = 'signup'
+  Signup = 'signup',
 }
 
 export function getAuthSubroute(route: AuthRoutes) {

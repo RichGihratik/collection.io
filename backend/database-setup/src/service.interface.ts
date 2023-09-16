@@ -1,4 +1,4 @@
-import { Faker } from "@faker-js/faker";
+import { Faker } from '@faker-js/faker';
 
 export interface Service {
   execute(ui: UI): Promise<number>;
@@ -21,7 +21,10 @@ export interface UI {
   print(str: string, type?: MsgType): void;
   askOptions<T>(options: Options<T>): Promise<T>;
   askBool(title: string): Promise<boolean>;
-  setProgress(title: string, itemCount: number): (updateProgress: number) => void;
+  setProgress(
+    title: string,
+    itemCount: number,
+  ): (updateProgress: number) => void;
   askFaker(): Promise<() => Faker>;
   clearDisplay(upperLinesCount?: number): void;
   drawSeparator(length?: number): void;

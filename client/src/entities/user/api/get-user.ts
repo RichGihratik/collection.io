@@ -6,15 +6,22 @@ export type UsersSearchOptions = {
   searchBy?: string;
 };
 
-export async function getUsers(opts: UsersSearchOptions, token?: string): Promise<User[]> {
-  return getResInfo(await get(`${USER_API_URL}`, {
-    query: opts,
-    fetch: token ? fetchWithToken(token) : fetch,
-  }));
+export async function getUsers(
+  opts: UsersSearchOptions,
+  token?: string,
+): Promise<User[]> {
+  return getResInfo(
+    await get(`${USER_API_URL}`, {
+      query: opts,
+      fetch: token ? fetchWithToken(token) : fetch,
+    }),
+  );
 }
 
-export async function getUser(id: number, token?: string): Promise<User>  {
-  return getResInfo(await get(`${USER_API_URL}/${id}`, {
-    fetch: token ? fetchWithToken(token) : fetch,
-  }));
+export async function getUser(id: number, token?: string): Promise<User> {
+  return getResInfo(
+    await get(`${USER_API_URL}/${id}`, {
+      fetch: token ? fetchWithToken(token) : fetch,
+    }),
+  );
 }

@@ -11,12 +11,7 @@ export class FieldConfigService {
 
   async update(id: number, dto: UpdateFieldsDto, info: TUserInfo) {
     return this.db.$transaction(async (dbx) => {
-      const collection = await checkCollectionPermissions(
-        dbx,
-        info,
-        id,
-        info.id,
-      );
+      await checkCollectionPermissions(dbx, info, id, info.id);
 
       const sanitizedDto = {
         create: sanitizeFields(dto.create).map((field) => ({
@@ -39,8 +34,8 @@ export class FieldConfigService {
           },
         },
       });
-      
-      // We cant use batch query here because we change every value to individual values 
+
+      // We cant use batch query here because we change every value to individual values
       for (const field of sanitizedDto.update)
         await dbx.fieldConfig.update({
           where: {

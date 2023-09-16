@@ -6,7 +6,11 @@ import {
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { sanitize } from 'isomorphic-dompurify';
-import { CreateTokenService, hashPassword, comparePasswords } from '@collection.io/access-auth';
+import {
+  CreateTokenService,
+  hashPassword,
+  comparePasswords,
+} from '@collection.io/access-auth';
 import { DatabaseService, User, UserStatus } from '@collection.io/prisma';
 
 import { SigninDto, SignupDto, TokenDto } from './dto';

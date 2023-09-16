@@ -1,10 +1,13 @@
 import { FieldType } from '@collection.io/prisma';
 import { ObjectWithId, ObjectWithName } from '@/common';
 
-export type ItemRawValues = Record<string, {
-  type: FieldType,
-  value: string,
-}>;
+export type ItemRawValues = Record<
+  string,
+  {
+    type: FieldType;
+    value: string;
+  }
+>;
 
 export type ItemValues = Record<string, boolean | number | string | Date>;
 

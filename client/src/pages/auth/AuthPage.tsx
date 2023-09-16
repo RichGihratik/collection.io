@@ -6,7 +6,7 @@ export function AuthPage() {
   const { pathname } = useLocation();
 
   return (
-    <div className='flex flex-1 justify-center'>
+    <div className="flex flex-1 justify-center">
       {pathname === '/' + Routes.Auth ? (
         <Navigate to={`/${Routes.Auth}/${AuthRoutes.Signin}`} />
       ) : (

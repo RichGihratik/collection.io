@@ -9,6 +9,6 @@ export function useSignout() {
       const data = await signout();
       queryClient.setQueryData([VIEWER_QUERY_KEY], undefined);
       return data;
-    }
+    },
   });
 }
